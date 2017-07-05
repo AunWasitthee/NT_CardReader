@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Password">ดึงข้อมูล</string>
+    <string name="open">เริ่มทำงาน</string>
+    <string name="close">ปิดอุปกรณ์</string>
+    <string name="save">บันทึกข้อมูล</string>
+    <string name="device">เลือกอุปกรณ์</string>
+    <string name="system">ระบบอ่านบัตรประชาชน</string>
+    <string name="read">ดึงข้อมูล</string>
+    <string name="clear">ล้างข้อมูล</string>
+    <string name="out">ออกจากระบบ</string>
+    <string name="opensystem">เปิดระบบ</string>
+    <string name="Cidtizen">รหัสประจำตัว</string>
+    <string name="Name">ชื่อ-นามสกุล</string>
+    <string name="NameE">ชื่อ-นามสกุล(อังกฤษ)</string>
+    <string name="Address">ที่อยู่</string>
+    <string name="IS_Expire">วันทำบัตร</string>
+    <string name="IS_Expire2">วันบัตรหมดอายุ</string>
+    <string name="Datetoday">วันปัจจุบัน</string>
+    <string name="DateBirth">วันเดือนปีเกิด</string>
+    <string name="inputIdCard">กรุณากรอกหมายเลขบัตรประชาชน</string>
+    <!-- Title Toolbar -->
+    <string name="Personal">แก้ไขข้อมูลส่วนตัว</string>
+    <string name="LocationCard">ที่อยู่ตามบัตรประชาชน</string>
+    <string name="LocationNow">ที่อยุ่ปัจจุบัน</string>
+    <string name="EmergencyContact">บุคคลติดต่อ</string>
+    <string name="LocationMap">ค้นหาสถานที่</string>
+    <string name="SearchLocation">ค้นหาสถานที่จากชื่อ</string>
+<!-- ข้อมูลส่วนตัว -->
+    <string name="TitleTH">คำนำหน้า</string>
+    <string name="FirstName">ชื่อ</string>
+    <string name="LastName">สกุล</string>
+    <string name="Birthday">วันเกิด</string>
+    <string name="Alive">บุคคลท่านนี้เสียชีวิตแล้วหรือไม่</string>
+    <string name="General">ข้อมูลทั่วไป</string>
+    <string name="Tell">มือถือ</string>
+    <string name="HomeTell">โทรศัพท์บ้าน</string>
+    <string name="Email">อีเมลล์</string>
+    <string name="Disability">ประเภทความพิการ</string>
+    <string name="LanguageSkill">ความสามารถทางภาษา</string>
+    <string name="Hearing">มีเครื่องช่วยฟัง</string>
+    <string name="DiseaseDrug">โรคประจำตัว/การแพ้ยา</string>
+    <string name="Hospital">ข้อมูลโรงพยาบาล</string>
+    <!-- hint ข้อมูลส่วนตัว -->
+    <string name="ETitleTH">คำนำหน้า</string>
+    <string name="EFirstName">ชื่อ</string>
+    <string name="ELastName">สกุล</string>
+    <string name="EBirthday">00-00-0000</string>
+    <string name="ETell">เบอร์โทรศัพท์</string>
+    <string name="EHomeTell">เบอร์โทรศัพท์บ้าน</string>
+    <string name="EEmail">abc@example.com</string>
+    <string name="EDisease">ระบุโรคประจำตัว</string>
+    <string name="EDrug">ระบุการแพ้ยา</string>
+    <string name="EHospitalNear">โรงพยาบาลใกล้บ้านท่าน</string>
+    <string name="EHospitalUse">โรงพยาบาลที่ท่านใช้บริการเป็นประจำ</string>
+    <!-- ชุดข้อมูลเพศ -->
+    <string-array name="Sex">
+        <item>เพศชาย</item>
+        <item>เพศหญิง</item>
+        <item>--เพศ--</item>
+    </string-array>
+    <!-- ชุดข้อมูลความสัมพันะ์ -->
+    <string-array name="Relationship">
+        <item>พ่อ</item>
+        <item>แม่</item>
+        <item>พี่สาว</item>
+        <item>พี่ชาย</item>
+        <item>น้องสาว</item>
+        <item>น้องชาย</item>
+        <item>ลูก</item>
+        <item>ลุง</item>
+        <item>ป้า</item>
+        <item>ลูปพี่ลูกน้อง</item>
+        <item>ใครก็ไม่รู้</item>
+        <item>--ความสัมพันธ์--</item>
+    </string-array>
+    <!-- ชุดข้อมูลกรุ๊ปเลือด -->
+    <string-array name="BloodType">
+        <item>กรุ๊ป A</item>
+        <item>กรุ๊ป B</item>
+        <item>กรุ๊ป AB</item>
+        <item>กรุ๊ป O</item>
+        <item>--กรุ๊ปเลือด--</item>
+    </string-array>
+    <!-- ชุดข้อมูลสถานะการแต่งงาน -->
+    <string-array name="Marriage">
+        <item>โสด</item>
+        <item>แต่งงานแล้ว</item>
+        <item>หม่าย</item>
+        <item>หย่าร้าง</item>
+        <item>--การแต่งงาน--</item>
+    </string-array>
+    <!-- ชุดข้อมูลความสามารถ -->
+    <string-array name="Ability">
+        <item>ภาษามือไทย</item>
+        <item>พูดภาษาไทย</item>
+        <item>อ่านภาษาไทย</item>
+        <item>เขียนภาษาไทย</item>
+        <item>การอ่านริมฝีปาก</item>
+    </string-array>
+    <!-- ชุดข้อมูลศาสนา -->
+    <string-array name="Religion">
+
+        <item>ศาสนายูดาห์</item>
+        <item>ศาสนาคริสต์</item>
+        <item>ศาสนาอิสลาม</item>
+        <item>ศาสนาบาไฮ</item>
+        <item>ศาสนามาณีกี</item>
+        <item>ศาสนาโซโรอัสเตอร์</item>
+        <item>พลัทธิบาบี</item>
+        <item>ศาสนาบาไฮ</item>
+        <item>ศาสนาฮินดู</item>
+        <item>ศาสนาเชน</item>
+        <item>ศาสนาพุทธ</item>
+        <item>ศาสนาซิกข์</item>
+        <item>ศาสนาพื้นบ้านจีน</item>
+        <item>ศาสนาเต๋า</item>
+        <item>ศาสนาขงจื๊อ</item>
+        <item>ลัทธิบัวขาว</item>
+        <item>ลัทธิเซียนเทียนเต้า</item>
+        <item>ลัทธิอนุตตรธรรม</item>
+        <item>ลัทธิชินโต</item>
+        <item>ลัทธิชอนโดเกียว</item>
+        <item>ศาสนาเทนริเกียว</item>
+        <item>ศาสนาอียิปต์โบราณ</item>
+        <item>--ศาสนา--</item>
+    </string-array>
+    <!-- ประเภทความพิการ -->
+    <string-array name="Disability">
+        <item>คนหูหนวก-ความพิการทางการได้ยินหรือวื่อความหมาย</item>
+        <item>คนหูตึง-ความพิการทางการได้ยินหรือวื่อความหมาย</item>
+        <item>ผู้สูงอายุ</item>
+        <item>ผู้ร่วมทดสอบ</item>
+        <item>คนหุดี-คนที่มีการได้ยิน</item>
+        <item>--เลือกประเภทความพิการ--</item>
+    </string-array>
+    <string name="SDisability">--เลือกประเภทความพิการ--</string>
+    <string name="Deaf">คนหูหนวก-ความพิการทางการได้ยินหรือวื่อความหมาย</string>
+    <string name="Deaf1">คนหูตึง-ความพิการทางการได้ยินหรือวื่อความหมาย</string>
+    <string name="Elderly">ผู้สูงอายุ</string>
+    <string name="Participant">ผู้ร่วมทดสอบ</string>
+    <string name="Normal">คนหุดี-คนที่มีการได้ยิน</string>
+    <!-- ที่อยู่ -->
+
+    <string name="HouseNumber">บ้านเลขที่</string>
+    <string name="Moo">หมู่บ้าน/คอนโด</string>
+    <string name="Soi">ซอย</string>
+    <string name="Road">ถนน</string>
+    <string name="Tambon">ตำบล</string>
+    <string name="Amphur">อำเภอ</string>
+    <string name="Province">จังหวัด</string>
+    <string name="TambonAmphurProvince">เลือกจังหวัด,อำเภอ,ตำบล</string>
+    <string name="PostCode">รหัสไปรษณีย์</string>
+    <string name="Landmark">จุดสังเกตของบ้าน</string>
+    <string name="Latlng">เลือกพิกัดที่อยู่</string>
+    <string name="BLatlng">กดเพื่อเลือกพิกัดที่อยู่</string>
+    <string name="BSelectPhoto">กดเพื่อเลือกรูปภาพ</string>
+    <!-- input ที่อยู่ -->
+
+    <string name="EHouseNumber">บ้านเลขที่</string>
+    <string name="EMoo">หมู่บ้าน/คอนโด</string>
+    <string name="ESoi">ตัวอย่าง คลองหลวง</string>
+    <string name="ERoad">ตัวอย่าง พหลโยธิน</string>
+    <string name="ETambon">ตำบล</string>
+    <string name="EAmphur">อำเภอ</string>
+    <string name="EProvince">จังหวัด</string>
+    <string name="EPostCode">12120</string>
+    <string name="ELandmark">ระบุจุดสังเกตของบ้าน</string>
+    <string name="ELatlng">Phaya Thai,Bangkok,Thailand(13.766732,100.544453)</string>
+    <!-- Map -->
+    <string name="FindLatLng">กรอกพิกัด</string>
+    <string name="ELatitude">ละติจูด</string>
+    <string name="ELongtitude">ลองจิจูด</string>
+    <string name="BGo">ไป</string>
+    <string name="Or">หรือ</string>
+    <string name="BPlaceApi">ค้นหาสถานที่จากชื่อ</string>
+
+</resources>

@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    >
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme">
+    <TextView
+        android:id="@+id/Next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ถัดไป"
+        android:layout_gravity="end"
+        android:paddingEnd="20dp"
+        android:textSize="14sp"
+        android:textColor="@color/Black"/>
+        </android.support.v7.widget.Toolbar>
+
+    <ScrollView
+
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:fillViewport="true"
+    android:scrollbars="vertical"
+    android:layout_below="@+id/toolbar">
+
+
+
+
+    <LinearLayout
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="20dp">
+
+    <ImageView
+        android:id="@+id/pic"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        app:srcCompat="@drawable/user" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <TextView
+                android:id="@+id/CitizenID"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="เลขบัตรประชาชน"
+                android:textSize="14sp"
+                android:textColor="@color/Black"/>
+            <TextView
+                android:id="@+id/ECitizenID"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_weight="1"
+                android:inputType="textPersonName"
+                android:hint="@string/ETitleTH"
+                android:textSize="14sp"
+                android:textColor="@color/Blue"/>
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:id="@+id/TitleTH"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/TitleTH"
+            android:textSize="14sp"
+            android:textColor="@color/Black"/>
+
+        <TextView
+            android:id="@+id/FirstName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/FirstName"
+            android:textSize="14sp"
+            android:textColor="@color/Black"/>
+
+        <TextView
+            android:id="@+id/LastName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/LastName"
+            android:textSize="14sp"
+            android:textColor="@color/Black"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:id="@+id/ETitleTH"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+
+            android:textSize="14sp"
+            android:textColor="@color/Blue"
+
+            android:hint="@string/ETitleTH" />
+
+        <TextView
+            android:id="@+id/EFirstName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textColor="@color/Blue"
+            android:hint="@string/EFirstName" />
+
+        <TextView
+            android:id="@+id/ELastName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="14sp"
+            android:textColor="@color/Blue"
+            android:hint="@string/ELastName" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/Birthday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/Birthday"
+            android:textSize="14sp"
+            android:textColor="@color/Black"/>
+
+        <EditText
+            android:id="@+id/EBirthday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="8"
+            android:hint="@string/EBirthday"
+            android:inputType="date"
+            android:textSize="14sp"
+            android:textColor="@color/Blue"/>
+
+        <Spinner
+            android:id="@+id/Marriage"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Spinner
+            android:id="@+id/Sex"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            />
+
+
+        <Spinner
+            android:id="@+id/BloodType"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            />
+
+    </LinearLayout>
+        <Spinner
+            android:id="@+id/Religion"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            />
+
+        <Switch
+            android:id="@+id/EAlive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/Alive"
+            android:textColor="@color/Black"
+            android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/General"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/General"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:textColor="@color/Black"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/Tell"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/Tell"
+            android:textSize="14sp"
+            android:textColor="@color/Black"/>
+
+        <TextView
+            android:id="@+id/HomeTell"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/HomeTell"
+            android:textColor="@color/Black"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/ETell"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:inputType="number"
+            android:hint="@string/ETell"
+            android:textSize="14sp"
+            android:textColor="@color/Blue"/>
+
+        <EditText
+            android:id="@+id/EHomeTell"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:inputType="number"
+            android:hint="@string/EHomeTell"
+            android:textSize="14sp"
+            android:textColor="@color/Blue"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/Email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Email"
+        android:textSize="14sp"
+        android:textColor="@color/Black"/>
+
+        <EditText
+            android:id="@+id/EEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/EEmail"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/Blue"
+            android:textSize="14sp"
+
+            />
+
+    <TextView
+        android:id="@+id/Disability"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/Disability"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:textColor="@color/Black"/>
+
+
+
+        <Spinner
+            android:id="@+id/SDisability"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_weight="1" />
+
+        <Switch
+            android:id="@+id/EHearing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/Hearing" />
+
+
+
+    <com.example.aunnie_iw.ntcardreader.MultiSelectionSpinner
+        android:id="@+id/Ability"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        />
+
+    <TextView
+        android:id="@+id/DiseaseDrug"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/DiseaseDrug"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:textColor="@color/Black"/>
+
+        <EditText
+            android:id="@+id/EDisease"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/EDisease"
+            android:inputType="textPersonName"
+            android:textColor="@color/Blue"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/EAllergy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/EDrug"
+            android:inputType="textPersonName"
+            android:textColor="@color/Blue"
+            android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/Hospital"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:gravity="center"
+        android:text="@string/Hospital"
+        android:textSize="14sp"
+        android:textColor="@color/Black"/>
+
+        <EditText
+            android:id="@+id/EHospitalNear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/EHospitalNear"
+
+            android:inputType="textPersonName"
+            android:textColor="@color/Blue"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/EHospitalUse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/EHospitalUse"
+            android:inputType="textPersonName"
+            android:textColor="@color/Blue"
+            android:textSize="14sp" />
+
+
+
+    </LinearLayout>
+
+    </ScrollView>
+    </RelativeLayout>

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    >
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme">
+        <TextView
+            android:id="@+id/Next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ถัดไป"
+            android:layout_gravity="end"
+            android:paddingEnd="20dp"
+            android:textSize="14sp"
+            android:textColor="@color/Black"/>
+    </android.support.v7.widget.Toolbar>
+
+    <ScrollView
+
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:fillViewport="true"
+        android:scrollbars="vertical"
+        android:layout_below="@+id/toolbar">
+
+
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp">
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+
+                <TextView
+                    android:id="@+id/HouseNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/HouseNumber"
+                    android:textColor="@color/Black"
+                    android:textSize="14sp" />
+
+
+                <TextView
+                    android:id="@+id/Moo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/Moo"
+                    android:textColor="@color/Black"
+                    android:textSize="14sp" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <EditText
+                    android:id="@+id/EHouseNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_weight="1"
+                    android:inputType="textPostalAddress"
+                    android:hint="@string/EHouseNumber"
+                    android:textSize="14sp"
+                    android:textColor="@color/Blue"/>
+                <EditText
+                    android:id="@+id/EMoo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="5"
+                    android:layout_weight="1"
+                    android:inputType="textPersonName"
+                    android:hint="@string/EMoo"
+                    android:textSize="14sp"
+                    android:textColor="@color/Blue"/>
+
+
+
+
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+
+                <TextView
+                    android:id="@+id/Soi"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/Soi"
+                    android:textColor="@color/Black"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/Road"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/Road"
+                    android:textColor="@color/Black"
+                    android:textSize="14sp" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <EditText
+                    android:id="@+id/ESoi"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:layout_weight="1"
+                    android:inputType="textPersonName"
+                    android:hint="@string/ESoi"
+                    android:textSize="14sp"
+                    android:textColor="@color/Blue"/>
+                <EditText
+                    android:id="@+id/ERoad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="5"
+                    android:layout_weight="1"
+                    android:inputType="textPersonName"
+                    android:hint="@string/ERoad"
+                    android:textSize="14sp"
+                    android:textColor="@color/Blue"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/TambonAmphurProvince"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/TambonAmphurProvince"
+                android:textColor="@color/Black"
+                android:textSize="14sp"/>
+            <Spinner
+                android:id="@+id/Province"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+
+
+                />
+
+            <Spinner
+                android:id="@+id/Amphur"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+
+
+                />
+            <Spinner
+                android:id="@+id/Tambon"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+
+                />
+            <TextView
+                android:id="@+id/PostCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/PostCode"
+                android:textColor="@color/Black"
+                android:textSize="14sp"/>
+            <EditText
+                android:id="@+id/EPostCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:hint="@string/EPostCode"
+                android:textSize="14sp"
+                android:textColor="@color/Blue"/>
+            <TextView
+                android:id="@+id/Landmark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Landmark"
+                android:textColor="@color/Black"
+                android:textSize="14sp"/>
+
+            <EditText
+                android:id="@+id/ELanmark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:hint="@string/ELandmark"
+                android:textSize="14sp"
+                android:textColor="@color/Blue"/>
+            <TextView
+                android:id="@+id/LatLng"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Latlng"
+                android:textColor="@color/Black"
+                android:textSize="14sp"/>
+
+            <Button
+                android:id="@+id/BLatLng"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/BLatlng" />
+            <TextView
+                android:id="@+id/SLatLng"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/ELatlng"
+                android:gravity="center"
+                android:textColor="@color/Blue"
+                android:textSize="12sp"/>
+            <Button
+                android:id="@+id/BSelectPhoto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select Photo" />
+            <ImageView
+                android:id="@+id/viewImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/home" />
+        </LinearLayout>
+
+    </ScrollView>
+</RelativeLayout>

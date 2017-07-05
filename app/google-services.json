@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "674125845379",
+    "firebase_url": "https://ntcardreader-e296f.firebaseio.com",
+    "project_id": "ntcardreader-e296f",
+    "storage_bucket": "ntcardreader-e296f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:674125845379:android:6cffa2f265461f71",
+        "android_client_info": {
+          "package_name": "com.example.aunnie_iw.ntcardreader"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "674125845379-8fat3g2cg1c1lsl55ouh5cgpdn9p5n5h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.aunnie_iw.ntcardreader",
+            "certificate_hash": "e28296e666c79a94a6884f4f5b05911933c36e29"
+          }
+        },
+        {
+          "client_id": "674125845379-qt5em9c4fjsefhcgqrb46e18dlgo01lc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHiAe_upzWC2M4lBhYQLkAUBbdePm8MKM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "674125845379-qt5em9c4fjsefhcgqrb46e18dlgo01lc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

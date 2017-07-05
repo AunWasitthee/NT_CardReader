@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/inputIdCard"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:layout_above="@+id/inputIdCard"/>
+
+    <EditText
+        android:id="@+id/inputIdCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number"
+        android:gravity="center"
+        android:layout_centerInParent="true"/>
+
+    <Button
+        android:id="@+id/BOk"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ตกลง"
+        android:layout_below="@+id/inputIdCard"/>
+
+    <Button
+        android:id="@+id/BReadData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="อ่านข้อมูลจากบัตร"
+        android:layout_below="@+id/BOk"/>
+
+</RelativeLayout>
