@@ -154,26 +154,33 @@ public class LocationCard extends AppCompatActivity implements View.OnClickListe
         EHouseNumber = (EditText) findViewById(R.id.EHouseNumber);
         if(people.getAddressCard() !=null && people.getAddressCard().getHouseNumber()!=null)
             EHouseNumber.setText(people.getAddressCard().getHouseNumber());
+
         EMoo = (EditText) findViewById(R.id.EMoo);
         if(people.getAddressCard() !=null && people.getAddressCard().getMoo()!=null)
             EMoo.setText(people.getAddressCard().getMoo());
+
         ESoi = (EditText) findViewById(R.id.ESoi);
         if(people.getAddressCard() !=null && people.getAddressCard().getSoi()!=null)
             ESoi.setText(people.getAddressCard().getSoi());
+
         ERoad = (EditText) findViewById(R.id.ERoad);
         if(people.getAddressCard() !=null && people.getAddressCard().getRoad()!=null)
             ERoad.setText(people.getAddressCard().getRoad());
+
         EPostcode = (EditText) findViewById(R.id.EPostCode);
         if(people.getAddressCard() !=null && people.getAddressCard().getPostcode()!=null)
             EPostcode.setText(people.getAddressCard().getPostcode());
+
         ELandmark = (EditText) findViewById(R.id.ELanmark);
         if(people.getAddressCard() !=null && people.getAddressCard().getLandmark()!=null)
             ELandmark.setText(people.getAddressCard().getLandmark());
+
         SLatLng = (TextView) findViewById(R.id.SLatLng);
         if(people.getAddressCard() !=null && people.getAddressCard().getLatitude()!=null&&people.getAddressCard().getLongitude()!=null)
             SLatLng.setText("( " + String.valueOf(people.getAddressCard().getLatitude()) +", "+String.valueOf(people.getAddressCard().getLongitude() +" )"));
+//
         folderRef = storageRef.child("photos");
-        imageRef = folderRef.child("firebase.png");
+//        imageRef = folderRef.child("firebase.png");
 
         //StorageReference storageRef = storage.getReference();
         imageRef = folderRef.child(people.getProfileData().getCitizenID() +"_LocationCard.jpg");
@@ -897,7 +904,7 @@ public class LocationCard extends AppCompatActivity implements View.OnClickListe
 //    }
     private void downloadInMemory() {
     //long ONE_MEGABYTE = 1024 * 1024;
-		//Helper.showDialog(this);
+        // Helper.showDialog(this);
 		imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
         @Override
         public void onSuccess(byte[] bytes) {
@@ -906,15 +913,15 @@ public class LocationCard extends AppCompatActivity implements View.OnClickListe
             viewImage.setImageBitmap(bitmap);
             Log.d("BIT", "onSuccess: ");
         }
-    }).addOnFailureListener(new OnFailureListener() {
-        @Override
-        public void onFailure(@NonNull Exception exception) {
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
             //Helper.dismissDialog();
            // mTextView.setText(String.format("Failure: %s", exception.getMessage()));
             Log.d(exception.getMessage(), "onFailure: ");
-        }
-    });
-}
+            }
+        });
+    }
     public class FeedTask extends AsyncTask<String, Void ,JSONArray> {
         // Asycdialog = new ProgressDialog(LocationCard.this);
         // String[] resultData;

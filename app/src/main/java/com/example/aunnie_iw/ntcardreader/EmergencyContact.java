@@ -36,6 +36,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -126,6 +127,8 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
         permissionStatus = getSharedPreferences("permissionStatus",MODE_PRIVATE);
         PathImgLocationCard = getIntent().getExtras().getString("PathImgLocationCard");
         PathImgLocationNow = getIntent().getExtras().getString("PathImgLocationNow");
+
+
         Log.d(PathImgLocationCard, "PathImgLocationCard ");
         Log.d(PathImgLocationNow, "PathImgLocationNow");
 
@@ -136,6 +139,35 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
         Log.d(people.getAddressNow().getRoad(), "LocationNow: ");
         Log.d(people.getAddressNow().getPostcode(), "LocationNow: ");
         Log.d(people.getAddressNow().getLandmark(), "LocationNow: ");
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("EmergencyContact").child(people.getContactID());
+//        ref.addChildEventListener(ChildEventListener listener) {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                if (dataSnapshot.exists()) {
+//                    // dataSnapshot is the "issue" node with all children with id 0
+//                    for (DataSnapshot issue : dataSnapshot.getChildren()) {
+//                         contactData = issue.getValue(ContactData.class);
+//                        // do something with the individual "issues"
+//                        Log.d(contactData.getCitizenID(), "onDataChange: ");
+//                        Log.d("MMMMMMMMMMMMMMMMMMMMM", "onDataChange: ");
+//                        //textView.setText("finish firebase");
+//                        //Log.d("cardReader", people.getContactID());
+//                        //textView.setText(carddata.getFirstNameEng());
+//                    }
+//                }
+//            }
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                //textView.setText(databaseError.getMessage());
+//                Log.d(databaseError.getMessage(), "onCancelled: ");
+//                Log.d("FFFFFFFFFFFF", "onDataChange: ");
+//            }
+//        });
+
+//////////////////
         /*------------------- Photo--------------------------------------------------*/
         BSelectPhoto=(Button)findViewById(R.id.BSelectPhoto);
         viewImage=(ImageView)findViewById(R.id.viewImage);

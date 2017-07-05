@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -32,6 +33,11 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,6 +63,8 @@ public class LocationNow extends AppCompatActivity implements View.OnClickListen
     private Bitmap ImgLocationCard;
     public static final int MY_PERMISSIONS_REQUEST_STORED = 90;
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 98;
+
+    private StorageReference folderRef, imageRef;
 
     public static final int REQUEST_GALLERY = 1;
     public static final int REQUEST_CAMERA = 2;
@@ -131,14 +139,43 @@ public class LocationNow extends AppCompatActivity implements View.OnClickListen
         /*------------------- TextView ------------------------------------*/
 
         EHouseNumber = (EditText) findViewById(R.id.EHouseNumber);
+        if(people.getAddressNow() !=null && people.getAddressNow().getHouseNumber()!=null)
+            EHouseNumber.setText(people.getAddressNow().getHouseNumber());
+
         EMoo = (EditText) findViewById(R.id.EMoo);
+        if(people.getAddressNow() !=null && people.getAddressNow().getMoo()!=null)
+            EMoo.setText(people.getAddressNow().getMoo());
+
         ESoi = (EditText) findViewById(R.id.ESoi);
+        if(people.getAddressNow() !=null && people.getAddressNow().getSoi()!=null)
+            ESoi.setText(people.getAddressNow().getSoi());
+
         ERoad = (EditText) findViewById(R.id.ERoad);
+        if(people.getAddressNow() !=null && people.getAddressNow().getRoad()!=null)
+            ERoad.setText(people.getAddressNow().getRoad());
 
         EPostcode = (EditText) findViewById(R.id.EPostCode);
+        if(people.getAddressNow() !=null && people.getAddressNow().getPostcode()!=null)
+            EPostcode.setText(people.getAddressNow().getPostcode());
+
         ELandmark = (EditText) findViewById(R.id.ELanmark);
+        if(people.getAddressNow() !=null && people.getAddressNow().getLandmark()!=null)
+            ELandmark.setText(people.getAddressNow().getLandmark());
 
         SLatLng = (TextView) findViewById(R.id.SLatLng);
+        if(people.getAddressNow() !=null && people.getAddressNow().getLatitude()!=null&&people.getAddressNow().getLongitude()!=null)
+            SLatLng.setText("( " + String.valueOf(people.getAddressNow().getLatitude()) +", "+String.valueOf(people.getAddressNow().getLongitude() +" )"));
+//
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        folderRef = storageRef.child("photos");
+//        imageRef = folderRef.child("firebase.png");
+
+        //StorageReference storageRef = storage.getReference();
+        imageRef = folderRef.child(people.getProfileData().getCitizenID() +"_LocationNow.jpg");
+        downloadInMemory();
+
+
+
         /*------------------- Spinner Province--------------------------------------------------------------------------------------------------*/
         mProvince = (Spinner) findViewById(R.id.Province);
 
@@ -195,7 +232,15 @@ public class LocationNow extends AppCompatActivity implements View.OnClickListen
         };
         adapterProvince.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mProvince.setAdapter(adapterProvince);
-        mProvince.setSelection(adapterProvince.getCount());
+        int indexProvince;
+        if(people.getAddressNow() != null && people.getAddressNow().getProvince()!=null){
+            //Province[Province.length-1] = people.getAddressCard().getProvince();
+            indexProvince = Arrays.asList(Province).indexOf(people.getAddressNow().getProvince());
+            mProvince.setSelection(indexProvince);
+        }
+        else {
+            mProvince.setSelection(adapterProvince.getCount());
+        }
         mProvince.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View v, int i, long l) {
@@ -292,7 +337,15 @@ public class LocationNow extends AppCompatActivity implements View.OnClickListen
         };
         adapterAmphur.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mAmphur.setAdapter(adapterAmphur);
-        mAmphur.setSelection(adapterAmphur.getCount());
+        int indexAmphur;
+        if(people.getAddressNow() != null && people.getAddressNow().getAmphur()!=null){
+            //Amphur[Amphur.length-1] = people.getAddressCard().getAmphur();
+            indexAmphur = Arrays.asList(Amphur).indexOf(people.getAddressNow().getAmphur());
+            mAmphur.setSelection(indexAmphur);
+        }
+        else {
+            mAmphur.setSelection(adapterAmphur.getCount());
+        }
         mAmphur.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View v, int i, long l) {
@@ -386,7 +439,15 @@ public class LocationNow extends AppCompatActivity implements View.OnClickListen
         };
         adapterTambon.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mTambon.setAdapter(adapterTambon);
-        mTambon.setSelection(adapterTambon.getCount());
+        int indexTambon;
+        if(people.getAddressNow() != null && people.getAddressNow().getAmphur()!=null){
+            //Amphur[Amphur.length-1] = people.getAddressCard().getAmphur();
+            indexTambon = Arrays.asList(Tambon).indexOf(people.getAddressNow().getTambon());
+            mTambon.setSelection(indexTambon);
+        }
+        else {
+            mTambon.setSelection(adapterTambon.getCount());
+        }
         mTambon.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View v, int i, long l)
@@ -422,6 +483,11 @@ public class LocationNow extends AppCompatActivity implements View.OnClickListen
                     addressData.setMoo(EMoo.getText().toString());
                     addressData.setSoi(ESoi.getText().toString());
                     addressData.setRoad(ERoad.getText().toString());
+
+                    addressData.setProvince(mProvince.getSelectedItem().toString());
+                    addressData.setAmphur(mAmphur.getSelectedItem().toString());
+                    addressData.setTambon(mTambon.getSelectedItem().toString());
+
                     addressData.setPostcode(EPostcode.getText().toString());
                     addressData.setLandmark(ELandmark.getText().toString());
                     addressData.setLatitude(latitude);
@@ -775,7 +841,26 @@ public class LocationNow extends AppCompatActivity implements View.OnClickListen
             // You can add here other case statements according to your requirement.
         }
     }
-
+    private void downloadInMemory() {
+        //long ONE_MEGABYTE = 1024 * 1024;
+        // Helper.showDialog(this);
+        imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                // Helper.dismissDialog();
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                viewImage.setImageBitmap(bitmap);
+                Log.d("BIT", "onSuccess: ");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                //Helper.dismissDialog();
+                // mTextView.setText(String.format("Failure: %s", exception.getMessage()));
+                Log.d(exception.getMessage(), "onFailure: ");
+            }
+        });
+    }
     public class FeedTask extends AsyncTask<String, Void ,JSONArray> {
         // Asycdialog = new ProgressDialog(LocationCard.this);
         // String[] resultData;

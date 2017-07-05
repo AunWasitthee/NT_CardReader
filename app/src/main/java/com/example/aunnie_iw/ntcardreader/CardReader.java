@@ -106,7 +106,7 @@ public class CardReader extends Activity implements View.OnClickListener {
         //mOk.setEnabled(false);
         mReadData = (Button) findViewById(R.id.BReadData);
         mReadData.setOnClickListener(this);
-        mReadData.setEnabled(false);
+       // mReadData.setEnabled(false);
 //        /*-----------------------------*/
 //        Stmsg = (TextView) findViewById(R.id.textView1);
  /*---------------------------------------ส่วนของการแสดงผล-----------------------------------------------   */
