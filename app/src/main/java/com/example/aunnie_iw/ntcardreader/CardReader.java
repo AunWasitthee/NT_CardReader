@@ -57,14 +57,9 @@ public class CardReader extends Activity implements View.OnClickListener {
     protected PendingIntent mPermissionIntent;  //pending = รอ
     protected NT_reader mCard;
     /*-----------------------------แสดงผล----------------------------------------*/
-    //protected TextView Cid,NameTH,Address,CreateCard,NameEng,Datebirthday,ExpireCard,DateToday,Stmsg;
-    //protected TextView textView;
     protected EditText inputIdCard;
-    //protected Button mExit,mOpen,mSave;
     protected Button mOk, mReadData;
     private String deviceName;
-    /*-------------------------------------------------------------4 */
-    //protected ImageView Img ;
     /*-------------------------------------------------------------*/
     // Write a message to the database
     protected FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -74,9 +69,7 @@ public class CardReader extends Activity implements View.OnClickListener {
     private People people;
     private AddressData addressData;
     private ProfileData profileData;
-    /*-----------------Permission----------------------------*/
-    private SharedPreferences permissionStatus;
-    private boolean sentToSettings = false;
+
     /*-------------------------------------------------------------*/
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,15 +104,6 @@ public class CardReader extends Activity implements View.OnClickListener {
 //        Stmsg = (TextView) findViewById(R.id.textView1);
  /*---------------------------------------ส่วนของการแสดงผล-----------------------------------------------   */
         inputIdCard = (EditText) findViewById(R.id.inputIdCard);
-//        Cid = (TextView) findViewById(R.id.ECid);Cid.setEnabled(false);
-//        NameTH = (TextView) findViewById(R.id.EName);NameTH.setEnabled(false);
-//        NameEng = (TextView) findViewById(R.id.NameEng);NameEng.setEnabled(false);
-//        Datebirthday = (TextView) findViewById(R.id.date);Datebirthday.setEnabled(false);
-//        Address = (TextView) findViewById(R.id.EAdd);Address.setEnabled(false);
-//        CreateCard = (TextView) findViewById(R.id.EIs_Ex);CreateCard.setEnabled(false);
-//        ExpireCard = (TextView) findViewById(R.id.Is_Ex2);ExpireCard.setEnabled(false);
-//        DateToday = (TextView) findViewById(R.id.DateToday);DateToday.setEnabled(false);
-//        Img=(ImageView) findViewById(R.id.imageView1);
         people = new People();
     }
 
@@ -247,98 +231,123 @@ public class CardReader extends Activity implements View.OnClickListener {
                 mCard.open();
                 //mOk.setEnabled(false);
                 mReadData.setEnabled(false);
-//                Stmsg.setText("เปิดอุปกรณ์สำเร็จ "+"\n");
+//                เปิดอุปกรณ์สำเร็จ
                 mCard.startCardStatusMonitoring(mHandler);
             } catch (Exception e) {
-                // Stmsg.setText("ไม่พบอุปกรณ์"+"\n");
+                // ไม่พบอุปกรณ์
             }
         }
         if (view == mOk) {
             try {
-//             String deviceName = (String) mSpinner.getSelectedItem(); //ทำการเลือกitem ใน spinner
-            String idcard = inputIdCard.getText().toString();
-            //textView.setText(idcard);
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-
-            Query query = reference.child("Peoplee").orderByChild("profileData/citizenID").equalTo(idcard);
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        // dataSnapshot is the "issue" node with all children with id 0
-                        for (DataSnapshot issue : dataSnapshot.getChildren()) {
-                            people = issue.getValue(People.class);
-                            // do something with the individual "issues"
-
-                            //textView.setText("finish firebase");
-                            //Log.d("cardReader", people.getContactID());
-                            Intent intent = new Intent(CardReader.this, Profile.class);
-
-                            intent.putExtra("data", people);
-                            startActivity(intent);
-                            //textView.setText(carddata.getFirstNameEng());
-                        }
+                FindDataOnFirebase();
+//              String deviceName = (String) mSpinner.getSelectedItem(); //ทำการเลือกitem ใน spinner
 
 
+                } catch (Exception e) {
+                    //textView.setText(e.getMessage());
+                }
+        }
+    }
+
+    private void FindDataOnFirebase() {
+        String idcard = inputIdCard.getText().toString();
+        //textView.setText(idcard);
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+
+        Query query = reference.child("Peoplee").orderByChild("profileData/citizenID").equalTo(idcard);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // dataSnapshot is the "issue" node with all children with id 0
+                    for (DataSnapshot issue : dataSnapshot.getChildren()) {
+                        people = issue.getValue(People.class);
+                        // do something with the individual "issues"
+
+                        //textView.setText("finish firebase");
+                        //Log.d("cardReader", people.getContactID());
+                        Intent intent = new Intent(CardReader.this, Profile.class);
+
+                        intent.putExtra("data", people);
+                        startActivity(intent);
                     }
-                    else if(card != null ){
-                        try {
-                            //textView.setText("อ่านข้อมูลจาก card");
-                            addressData = new AddressData();
-                            addressData.setAmphur(card.getAddress().getAmphur());
-                            addressData.setHouseNumber(card.getAddress().getHouseNumber());
-                            addressData.setMoo(card.getAddress().getMoo());
-                            addressData.setProvince(card.getAddress().getProvince());
-                            addressData.setTambon(card.getAddress().getTambon());
-                                ByteArrayOutputStream bYtE = new ByteArrayOutputStream();
-                                card.getPicture().compress(Bitmap.CompressFormat.PNG, 100, bYtE);
-                                card.getPicture().recycle();
-                                byte[] byteArray = bYtE.toByteArray();
-                                String imageFile = Base64.encodeToString(byteArray, Base64.DEFAULT);
-                                profileData = new ProfileData();
-                                profileData.setCitizenID(card.getCitizenID());
-                           // profileData.setTitleEng(card.getTitleEng());
-                            profileData.setPrefixThai(card.getTitleThai());
-                            profileData.setBirthday(card.getBirthday());
-                            profileData.setCitizenID(card.getCitizenID());
-                           // profileData.setCreateCard(card.getCreateCard());
-                           // profileData.setFirstNameEng(card.getFirstNameEng());
-                            profileData.setFirstNameThai(card.getFirstNameThai());
-                           // profileData.setLastNameEng(card.getLastNameEng());
-                            profileData.setLastNameThai(card.getLastNameThai());
+                }
+                else if(card != null ){
+                    try {
+                        //textView.setText("อ่านข้อมูลจาก card");
+                        GetDataToPeopleOject();
 
-                           // profileData.setDateThaitoday(card.getDateThaitoday());
-                           // profileData.setExpireCard(card.getExpireCard());
-
-                            profileData.setImg(imageFile);
-                            people.setAddressCard(addressData);
-                            people.setProfileData(profileData);
-                            Log.d("cardFirebase", profileData.getCitizenID());
-                            Intent intent = new Intent(CardReader.this, Profile.class);
-                            intent.putExtra("data", people);
-                            startActivity(intent);
-                        } catch (Exception e) {
-                            //textView.setText(e.getMessage() + "" );
-                        }
-
+                        Log.d("cardFirebase", profileData.getCitizenID());
+                        Intent intent = new Intent(CardReader.this, Profile.class);
+                        intent.putExtra("data", people);
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        //textView.setText(e.getMessage() + "" );
                     }
-                    else{
-                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CardReader.this);
+                }
+                else {
+                    AlertDialogWhenNoData();
+                }
+            }
 
-                        // set title
-                        //alertDialogBuilder.setTitle("ไม่พบข้อมูล/หมายเลขบัตรไม่ถูกต้อง");
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //textView.setText(databaseError.getMessage());
+            }
+        });
+    }
 
-                        // set dialog message
-                        alertDialogBuilder
-                                .setMessage("ไม่พบข้อมูล/หมายเลขบัตรไม่ถูกต้อง")
-                                .setCancelable(false)
-                                .setPositiveButton("ตกลง",new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog,int id) {
-                                        // if this button is clicked, close
-                                        // current activity
-                                        //MainActivity.this.finish();
-                                    }
-                                });
+    private void GetDataToPeopleOject() {
+
+        addressData = new AddressData();
+        addressData.setAmphur(card.getAddress().getAmphur());
+        addressData.setHouseNumber(card.getAddress().getHouseNumber());
+        addressData.setMoo(card.getAddress().getMoo());
+        addressData.setProvince(card.getAddress().getProvince());
+        addressData.setTambon(card.getAddress().getTambon());
+        ByteArrayOutputStream bYtE = new ByteArrayOutputStream();
+        card.getPicture().compress(Bitmap.CompressFormat.PNG, 100, bYtE);
+        card.getPicture().recycle();
+        byte[] byteArray = bYtE.toByteArray();
+        String imageFile = Base64.encodeToString(byteArray, Base64.DEFAULT);
+        profileData = new ProfileData();
+        profileData.setCitizenID(card.getCitizenID());
+        // profileData.setTitleEng(card.getTitleEng());
+        profileData.setPrefixThai(card.getTitleThai());
+        profileData.setBirthday(card.getBirthday());
+        profileData.setCitizenID(card.getCitizenID());
+        // profileData.setCreateCard(card.getCreateCard());
+        // profileData.setFirstNameEng(card.getFirstNameEng());
+        profileData.setFirstNameThai(card.getFirstNameThai());
+        // profileData.setLastNameEng(card.getLastNameEng());
+        profileData.setLastNameThai(card.getLastNameThai());
+
+        // profileData.setDateThaitoday(card.getDateThaitoday());
+        // profileData.setExpireCard(card.getExpireCard());
+
+        profileData.setImg(imageFile);
+        people.setAddressCard(addressData);
+        people.setProfileData(profileData);
+    }
+
+
+    private void AlertDialogWhenNoData() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(CardReader.this);
+
+        // set title
+        //alertDialogBuilder.setTitle("ไม่พบข้อมูล/หมายเลขบัตรไม่ถูกต้อง");
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage("ไม่พบข้อมูล/หมายเลขบัตรไม่ถูกต้อง")
+                .setCancelable(false)
+                .setPositiveButton("ตกลง",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,int id) {
+                        // if this button is clicked, close
+                        // current activity
+                        //MainActivity.this.finish();
+                    }
+                });
 //                                .setNegativeButton("No",new DialogInterface.OnClickListener() {
 //                                    public void onClick(DialogInterface dialog, int id) {
 //                                        // if this button is clicked, just close
@@ -347,24 +356,9 @@ public class CardReader extends Activity implements View.OnClickListener {
 //                                    }
 //                                });
 
-                        // create alert dialog
-                        AlertDialog alertDialog = alertDialogBuilder.create();
-
-                        // show it
-                        alertDialog.show();
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    //textView.setText(databaseError.getMessage());
-                }
-            });
-
-                } catch (Exception e) {
-                    //textView.setText(e.getMessage());
-                }
-        }
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        // show it
+        alertDialog.show();
     }
 }
