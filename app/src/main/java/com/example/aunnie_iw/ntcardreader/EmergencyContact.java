@@ -140,32 +140,11 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
         Log.d(people.getAddressNow().getPostcode(), "LocationNow: ");
         Log.d(people.getAddressNow().getLandmark(), "LocationNow: ");
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("EmergencyContact").child(people.getContactID());
-//        ref.addChildEventListener(ChildEventListener listener) {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                if (dataSnapshot.exists()) {
-//                    // dataSnapshot is the "issue" node with all children with id 0
-//                    for (DataSnapshot issue : dataSnapshot.getChildren()) {
-//                         contactData = issue.getValue(ContactData.class);
-//                        // do something with the individual "issues"
-//                        Log.d(contactData.getCitizenID(), "onDataChange: ");
-//                        Log.d("MMMMMMMMMMMMMMMMMMMMM", "onDataChange: ");
-//                        //textView.setText("finish firebase");
-//                        //Log.d("cardReader", people.getContactID());
-//                        //textView.setText(carddata.getFirstNameEng());
-//                    }
-//                }
-//            }
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                //textView.setText(databaseError.getMessage());
-//                Log.d(databaseError.getMessage(), "onCancelled: ");
-//                Log.d("FFFFFFFFFFFF", "onDataChange: ");
-//            }
-//        });
+
+        //FirebaseDatabase database = FirebaseDatabase.getInstance();
+        //DatabaseReference ref = database.getReference("EmergencyContact").child(people.getContactID());
+        findContactDataOnFirebase();
+
 
 //////////////////
         /*------------------- Photo--------------------------------------------------*/
@@ -248,6 +227,8 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
 
         EPostcode = (EditText) findViewById(R.id.EPostCode);
         ELandmark = (EditText) findViewById(R.id.ELanmark);
+
+        SLatLng = (TextView) findViewById(R.id.SLatLng);
 /*------------------- Spinner Province--------------------------------------------------------------------------------------------------*/
         mProvince = (Spinner) findViewById(R.id.Province);
 
@@ -376,6 +357,76 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
         });
     }
 
+    private void findContactDataOnFirebase() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        Query query = reference.child("EmergencyContact").orderByChild(people.getContactID());
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    // dataSnapshot is the "issue" node with all children with id 0
+                    for (DataSnapshot issue : dataSnapshot.getChildren()) {
+                        contactData = issue.getValue(ContactData.class);
+                        // do something with the individual "issues"
+                        Log.d("findContactOnFirebase", "Success ");
+
+                        setDisplayContactData(contactData);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //textView.setText(databaseError.getMessage());
+                Log.d("findContactOnFirebase", databaseError.getMessage());
+
+            }
+        });
+    }
+
+    private void setDisplayContactData(ContactData contactData) {
+
+        if(contactData.getCitizenID() !=null )
+            ECitizenID.setText(contactData.getCitizenID());
+
+        if(contactData.getPrefixThai() !=null )
+            ETitleTH.setText(contactData.getPrefixThai());
+
+        if(contactData.getFirstNameThai() !=null )
+            EFirstName.setText(contactData.getFirstNameThai());
+
+        if(contactData.getLastNameThai() !=null )
+            ELastName.setText(contactData.getLastNameThai());
+
+        if(contactData.getTell() !=null )
+            ETell.setText(contactData.getTell());
+
+        if(contactData.getHometell() !=null )
+            EHomeTell.setText(contactData.getHometell());
+
+        if (contactData.getAddressData() !=null ) {
+            if (contactData.getAddressData().getHouseNumber() != null)
+                EHouseNumber.setText(contactData.getAddressData().getHouseNumber());
+
+            if (contactData.getAddressData().getMoo() != null)
+                EMoo.setText(contactData.getAddressData().getMoo());
+
+            if (contactData.getAddressData().getSoi() != null)
+                ESoi.setText(contactData.getAddressData().getSoi());
+
+            if (contactData.getAddressData().getRoad() != null)
+                ERoad.setText(contactData.getAddressData().getRoad());
+
+            if (contactData.getAddressData().getPostcode() != null)
+                EPostcode.setText(contactData.getAddressData().getPostcode());
+
+            if (contactData.getAddressData().getLandmark() != null)
+                ELandmark.setText(contactData.getAddressData().getLandmark());
+
+            if (contactData.getAddressData().getLatitude() != null && contactData.getAddressData().getLongitude() != null)
+                SLatLng.setText("( " + String.valueOf(contactData.getAddressData().getLatitude()) + ", " + String.valueOf(contactData.getAddressData().getLongitude() + " )"));
+        }
+    }
+
     public void spinnerAmphur(final String[] amphur, final String province_id){
         Log.d(amphur[0], "spinnerAmphur: AAAAAA");
         mAmphur = (Spinner) findViewById(R.id.Amphur);
@@ -471,6 +522,8 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
             } // end onNothingSelected method
         });
     }
+
+
     public void spinnerTambon(String[] Tambon){
 
         mTambon = (Spinner) findViewById(R.id.Tambon);
@@ -527,13 +580,21 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
                 break;
 
             case R.id.Update: {
-                addressData.setHouseNumber(EHouseNumber.getText().toString());
-                addressData.setMoo(EMoo.getText().toString());
-                addressData.setSoi(ESoi.getText().toString());
-                addressData.setRoad(ERoad.getText().toString());
-                addressData.setPostcode(EPostcode.getText().toString());
-                addressData.setLandmark(ELandmark.getText().toString());
-                contactData.setAddressData(addressData);
+                contactData.getAddressData().setHouseNumber(EHouseNumber.getText().toString());
+                contactData.getAddressData().setMoo(EMoo.getText().toString());
+                contactData.getAddressData().setSoi(ESoi.getText().toString());
+                contactData.getAddressData().setRoad(ERoad.getText().toString());
+                contactData.getAddressData().setPostcode(EPostcode.getText().toString());
+                contactData.getAddressData().setLandmark(ELandmark.getText().toString());
+
+                contactData.getAddressData().setProvince(mProvince.getSelectedItem().toString());
+                contactData.getAddressData().setAmphur(mAmphur.getSelectedItem().toString());
+                contactData.getAddressData().setTambon(mTambon.getSelectedItem().toString());
+                if (latitude!=null)
+                    contactData.getAddressData().setLatitude(latitude);
+                if (longitude!=null)
+                    contactData.getAddressData().setLongitude(longitude);
+
                 contactData.setCitizenID(ECitizenID.getText().toString());
                 contactData.setPrefixThai(ETitleTH.getText().toString());
                 contactData.setFirstNameThai(EFirstName.getText().toString());
@@ -559,36 +620,6 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
                 Log.d(contactData.getAddressData().getPostcode(), "Emergency: ");
                 Log.d(contactData.getAddressData().getLandmark(), "Emergency: ");
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-
-//                Query query = reference.child("EmergencyContact").orderByChild("citizenID").equalTo(contactData.getCitizenID());
-//                query.addListenerForSingleValueEvent(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(DataSnapshot dataSnapshot) {
-//                        if (dataSnapshot.exists()) {
-//                            // dataSnapshot is the "issue" node with all children with id 0
-//                            for (DataSnapshot issue : dataSnapshot.getChildren()) {
-//                                contactKey = issue.getKey();
-//                                // do something with the individual "issues"
-//
-//
-//
-//                            }
-//
-//                        } else {
-//                            contactKey = myRef.child("EmergencyContact").push().getKey();
-//                            people.setContactID(contactKey);
-//
-//
-//                        }
-//                        myRef.child("EmergencyContact").child(contactKey).setValue(contactData);
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {
-//
-//                    }
-//
-//                });
 
                 if (people.getPeopleKey() == null) {
                     peopleKey = myRef.child("Peoplee").push().getKey();
