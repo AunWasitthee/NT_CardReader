@@ -18,6 +18,7 @@ public class AddressData implements Serializable {
     private String landmark;
     private Double latitude;
     private Double longitude;
+    private String address;
     private String photourl;
 
     public AddressData() {
@@ -109,6 +110,14 @@ public class AddressData implements Serializable {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public String getAddress() {
+        return this.address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getPhotourl() {

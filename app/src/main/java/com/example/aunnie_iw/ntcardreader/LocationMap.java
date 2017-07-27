@@ -319,7 +319,7 @@ public class LocationMap extends AppCompatActivity implements
         latitude = mMap.getCameraPosition().target.latitude;
         longitude = mMap.getCameraPosition().target.longitude;
         new GetAddress().execute(String.format("%.4f,%.4f",latitude,longitude));
-        //Toast.makeText(this, "The camera has stopped moving.",Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "The camera has stopped moving.",Toast.LENGTH_SHORT).show();
     }
     @Override
     public void onPlaceSelected(Place place) {
@@ -361,6 +361,7 @@ public class LocationMap extends AppCompatActivity implements
                 intent2.putExtra("longitude",longitude);
 
                 intent2.putExtra("address",address);
+                Log.e("ONSelectMAP",latitude+"");
                 setResult(RESULT_OK, intent2);
                 finish();
                 break;

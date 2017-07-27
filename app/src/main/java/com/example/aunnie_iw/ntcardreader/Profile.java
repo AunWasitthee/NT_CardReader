@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -63,16 +64,19 @@ import okhttp3.Response;
  */
 
 public class Profile extends AppCompatActivity implements MultiSelectionSpinner.MultiSpinnerListener ,View.OnClickListener  {
-    private  Spinner mMarriage,mBloodType,mSex,mReligion,mDisability;
+    private Spinner mMarriage,mBloodType,mSex,mReligion,mDisability;
 
     private TextView ECitizenID,ETitleTH,EFirstName,ELastName;
     private EditText EBirthday,ETell,EHomeTell,EEmail,EDisease,EAllergy,EHospitalNear,EHospitalUse;
     private Switch EAlive ,EHearing;
     private ImageView Img ;
     private People people;
+    private ContactData contactData;
     private ProfileData profileData;
     private DisabilityData disabilityData;
-
+    private String[] picturePath;
+    private String[] pictureUri;
+    Bitmap pic;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,12 +90,19 @@ public class Profile extends AppCompatActivity implements MultiSelectionSpinner.
         profileData = new ProfileData();
         disabilityData = new DisabilityData();
         people = new People();
+        contactData = new ContactData();
         mMarriage = (Spinner) findViewById(R.id.Marriage);
 /*------------------- intent ข้อมูล --------------------------------------------------------------------------------------------------*/
         Intent intent = getIntent();
         people = (People) intent.getExtras().getSerializable("data");
+        contactData = (ContactData) intent.getExtras().getSerializable("contactData");
+        picturePath = intent.getStringArrayExtra("picturePath");
+        pictureUri = intent.getStringArrayExtra("pictureUri");
+
+//        Log.d("onCreate: ",contactData.getCitizenID());
         Log.d("5555555555", people.getProfileData().getCitizenID());
-        Bitmap pic = stringToBitMap(people.getProfileData().getImg());
+        if(people.getProfileData().getImg() != null )
+            pic = stringToBitMap(people.getProfileData().getImg());
 
         /*------------------- TextView Next--------------------------------------------------------------------------------------------------*/
         TextView Next = (TextView) findViewById(R.id.Next);
@@ -568,8 +579,20 @@ public class Profile extends AppCompatActivity implements MultiSelectionSpinner.
                 Log.d(people.getProfileData().getHospitalUse(), "onClick: ");
                 Log.d(people.getProfileData().getAlive(), "onClick: ");
                 intent.putExtra("data", people);
+                intent.putExtra("contactData",contactData);
+                intent.putExtra("picturePath",picturePath);
+                intent.putExtra("pictureUri",pictureUri);
                 startActivity(intent);
+                finish();
                 break;
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+            finish();
+            Log.e("onPressBack","Hello World");
+    }
+
 }

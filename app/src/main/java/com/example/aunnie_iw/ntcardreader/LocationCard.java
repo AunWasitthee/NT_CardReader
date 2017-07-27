@@ -19,6 +19,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -75,7 +76,6 @@ public class LocationCard extends AppCompatActivity implements View.OnClickListe
     private Button BSelectPhoto;
     public static final int MY_PERMISSIONS_REQUEST_STORED = 90;
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 98;
-    private Bitmap ImgLocationCard;
     public static final int REQUEST_GALLERY = 1;
     public static final int REQUEST_CAMERA = 2;
     public static final int REQUEST_ADDRESS = 3;
@@ -83,10 +83,12 @@ public class LocationCard extends AppCompatActivity implements View.OnClickListe
     private File f;
     private StorageReference folderRef, imageRef;
     private TextView SLatLng;
-    private Double latitude;
-    private Double longitude;
+
     private People people;
-    private AddressData addressData;
+    private ContactData contactData;
+    private String[] picturePath;
+    private Bitmap bitmap;
+    private String[] pictureUri;
     private EditText EHouseNumber, EMoo,ESoi,ERoad,EPostcode,ELandmark,EPhotourl;
     private Spinner mProvince,mAmphur,mTambon;
 
@@ -96,7 +98,6 @@ public class LocationCard extends AppCompatActivity implements View.OnClickListe
     private boolean sentToSettings = false;
     private SharedPreferences permissionStatus;
 
-    private String PathImgLocationCard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +107,7 @@ public class LocationCard extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.LocationCard);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        addressData = new AddressData();
+
 
         StorageReference storageRef = FirebaseStorage.getInstance().getReference();
 //        folderRef = storageRef.child("photos");
@@ -117,6 +118,10 @@ public class LocationCard extends AppCompatActivity implements View.OnClickListe
 /*------------------- intent ข้อมูล --------------------------------------------------------------------------------------------------*/
         Intent intent = getIntent();
         people = (People) intent.getExtras().getSerializable("data");
+        contactData = (ContactData) intent.getExtras().getSerializable("contactData");
+        picturePath = intent.getStringArrayExtra("picturePath");
+        pictureUri = intent.getStringArrayExtra("pictureUri");
+//        pictureBitmap = (Bitmap[]) intent.getParcelableArrayExtra("pictureBitmap");
 
         Log.d(people.getProfileData().getPrefixThai(), "LocationCard: ");
         Log.d(people.getProfileData().getFirstNameThai(), "LocationCard: ");
@@ -139,6 +144,24 @@ public class LocationCard extends AppCompatActivity implements View.OnClickListe
 
         BSelectPhoto = (Button) findViewById(R.id.BSelectPhoto);
         viewImage = (ImageView) findViewById(R.id.viewImage);
+        folderRef = storageRef.child("people/" + people.getProfileData().getCitizenID());
+        if (picturePath[0].equals("")) {
+            imageRef = folderRef.child(people.getProfileData().getCitizenID() + "_LocationCard");
+            downloadInMemory();
+        }
+        else if(!pictureUri[0].equals("")){
+            try {
+                uri = Uri.parse(pictureUri[0]);
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                bitmap = RotateImg.Rotate(picturePath[0],bitmap);
+                //Log.d(f.getPath(), "onActivityResult: Path");
+                //picturePath[0]  = uri.getPath();
+                viewImage.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         BSelectPhoto.setOnClickListener(LocationCard.this);
 
         /*------------------- TextView Next--------------------------------------------------------------------------------------------------*/
@@ -175,16 +198,12 @@ public class LocationCard extends AppCompatActivity implements View.OnClickListe
         if(people.getAddressCard() !=null && people.getAddressCard().getLandmark()!=null)
             ELandmark.setText(people.getAddressCard().getLandmark());
 
-        SLatLng = (TextView) findViewById(R.id.SLatLng);
-        if(people.getAddressCard() !=null && people.getAddressCard().getLatitude()!=null&&people.getAddressCard().getLongitude()!=null)
-            SLatLng.setText("( " + String.valueOf(people.getAddressCard().getLatitude()) +", "+String.valueOf(people.getAddressCard().getLongitude() +" )"));
-//
-        folderRef = storageRef.child("photos");
-//        imageRef = folderRef.child("firebase.png");
 
-        //StorageReference storageRef = storage.getReference();
-        imageRef = folderRef.child(people.getProfileData().getCitizenID() +"_LocationCard.jpg");
-        downloadInMemory();
+        SLatLng = (TextView) findViewById(R.id.SLatLng);
+        if(people.getAddressCard() !=null && people.getAddressCard().getAddress() !=null && people.getAddressCard().getLatitude()!=null&&people.getAddressCard().getLongitude()!=null)
+            SLatLng.setText(people.getAddressCard().getAddress() + " ( " + String.valueOf(people.getAddressCard().getLatitude()) +", "+String.valueOf(people.getAddressCard().getLongitude() +" )"));
+//
+
         /*------------------- Spinner Province--------------------------------------------------------------------------------------------------*/
         mProvince = (Spinner) findViewById(R.id.Province);
 
@@ -484,28 +503,26 @@ public class LocationCard extends AppCompatActivity implements View.OnClickListe
                 Intent intent = new Intent(LocationCard.this, LocationMap.class);
                 //intent.putExtra("data", cardFirebase);
                 startActivityForResult(intent, REQUEST_ADDRESS);
-
                 break;
 
             case R.id.Next:
                 Intent intent2 = new Intent(LocationCard.this, LocationNow.class);
                 //intent.putExtra("data", cardFirebase);
 
-                addressData.setHouseNumber(EHouseNumber.getText().toString());
-                addressData.setMoo(EMoo.getText().toString());
-                addressData.setSoi(ESoi.getText().toString());
-                addressData.setRoad(ERoad.getText().toString());
+                people.getAddressCard().setHouseNumber(EHouseNumber.getText().toString());
+                people.getAddressCard().setMoo(EMoo.getText().toString());
+                people.getAddressCard().setSoi(ESoi.getText().toString());
+                people.getAddressCard().setRoad(ERoad.getText().toString());
 
-                addressData.setProvince(mProvince.getSelectedItem().toString());
-                addressData.setAmphur(mAmphur.getSelectedItem().toString());
-                addressData.setTambon(mTambon.getSelectedItem().toString());
+                people.getAddressCard().setProvince(mProvince.getSelectedItem().toString());
+                people.getAddressCard().setAmphur(mAmphur.getSelectedItem().toString());
+                people.getAddressCard().setTambon(mTambon.getSelectedItem().toString());
 
-                addressData.setPostcode(EPostcode.getText().toString());
+                people.getAddressCard().setPostcode(EPostcode.getText().toString());
 
-                addressData.setLandmark(ELandmark.getText().toString());
-                addressData.setLatitude(latitude);
-                addressData.setLongitude(longitude);
-                people.setAddressCard(addressData);
+                people.getAddressCard().setLandmark(ELandmark.getText().toString());
+
+                //people.setAddressCard(addressData);
                 //Convert to byte array
 
 
@@ -520,10 +537,12 @@ public class LocationCard extends AppCompatActivity implements View.OnClickListe
                 //Log.d(people.getAddressCard().getLongitude().toString(), "LocationCard: ");
                 //uploadFromFile(uri.getPath());
                 intent2.putExtra("data", people);
-
-                intent2.putExtra("PathImgLocationCard",PathImgLocationCard);
+                intent2.putExtra("contactData",contactData);
+                intent2.putExtra("picturePath",picturePath);
+                intent2.putExtra("pictureUri",pictureUri);
 
                 startActivity(intent2);
+                finish();
 
                 break;
             case R.id.BSelectPhoto:
@@ -531,6 +550,48 @@ public class LocationCard extends AppCompatActivity implements View.OnClickListe
                 break;
 
         }
+    }
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent2 = new Intent(LocationCard.this, Profile.class);
+        //intent.putExtra("data", cardFirebase);
+
+        people.getAddressCard().setHouseNumber(EHouseNumber.getText().toString());
+        people.getAddressCard().setMoo(EMoo.getText().toString());
+        people.getAddressCard().setSoi(ESoi.getText().toString());
+        people.getAddressCard().setRoad(ERoad.getText().toString());
+
+        people.getAddressCard().setProvince(mProvince.getSelectedItem().toString());
+        people.getAddressCard().setAmphur(mAmphur.getSelectedItem().toString());
+        people.getAddressCard().setTambon(mTambon.getSelectedItem().toString());
+
+        people.getAddressCard().setPostcode(EPostcode.getText().toString());
+
+        people.getAddressCard().setLandmark(ELandmark.getText().toString());
+
+        //people.setAddressCard(addressData);
+
+        //Convert to byte array
+
+
+
+//        Log.d(people.getAddressCard().getHouseNumber(), "LocationCard: ");
+//        Log.d(people.getAddressCard().getMoo(), "LocationCard: ");
+//        Log.d(people.getAddressCard().getSoi(), "LocationCard: ");
+//        Log.d(people.getAddressCard().getRoad(), "LocationCard: ");
+//        Log.d(people.getAddressCard().getPostcode(), "LocationCard: ");
+//        Log.d(people.getAddressCard().getLandmark(), "LocationCard: ");
+        //Log.d(people.getAddressCard().getLatitude().toString(), "LocationCard: ");
+        //Log.d(people.getAddressCard().getLongitude().toString(), "LocationCard: ");
+        //uploadFromFile(uri.getPath());
+        intent2.putExtra("data", people);
+        intent2.putExtra("contactData", contactData);
+        intent2.putExtra("picturePath",picturePath);
+        intent2.putExtra("pictureUri",pictureUri);
+        startActivity(intent2);
+        Log.e("onPressBack","Hello World2");
+        finish();
     }
 
     private void selectImage() {
@@ -557,9 +618,9 @@ public class LocationCard extends AppCompatActivity implements View.OnClickListe
 
 
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        String timeStamp =
-                                new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                        String imageFileName = "IMG_" + timeStamp + ".jpg";
+//                        String timeStamp =
+//                                new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                        String imageFileName = people.getProfileData().getCitizenID() + "_LocationCard";
                         f = new File(Environment.getExternalStorageDirectory()
                                 , "DCIM/Camera/" + imageFileName);
                         uri = Uri.fromFile(f);
@@ -600,19 +661,19 @@ public class LocationCard extends AppCompatActivity implements View.OnClickListe
         Log.d("onActivityResult", "onActivityResult: ");
         if (requestCode == REQUEST_GALLERY && resultCode == RESULT_OK) {
             uri = data.getData();
-
-            PathImgLocationCard = Helper.getPath(this, Uri.parse(data.getData().toString()));
+            pictureUri[0] = uri.toString();
+            picturePath[0] = Helper.getPath(this, Uri.parse(data.getData().toString()));
             //uploadFromFile(PathImgLocationCard);
             //File imageFile = new File(getRealPathFromURI(uri));
             Log.d(uri.toString(), "onActivityResult: ");
             Log.d(uri.getPath(), "onActivityResult: ");
-            Log.d(PathImgLocationCard, "onActivityResult: ");
+            Log.d(picturePath[0] , "onActivityResult: ");
             try {
-                ImgLocationCard = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-                ImgLocationCard= RotateImg.Rotate(PathImgLocationCard,ImgLocationCard);
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),uri);
+                bitmap= RotateImg.Rotate(picturePath[0] ,bitmap);
                 Log.d("bitmap", "onActivityResult: ");
                 //uploadFromDataInMemory(bitmap);
-                viewImage.setImageBitmap(ImgLocationCard);
+                viewImage.setImageBitmap(bitmap);
             } catch (FileNotFoundException e) {
                 Log.d("FileNotFoundException", "onActivityResult: ");
                 e.printStackTrace();
@@ -629,11 +690,12 @@ public class LocationCard extends AppCompatActivity implements View.OnClickListe
 
             try {
 
-                ImgLocationCard = MediaStore.Images.Media.getBitmap(cr, uri);
-                ImgLocationCard = RotateImg.Rotate(uri.getPath(),ImgLocationCard);
+                bitmap = MediaStore.Images.Media.getBitmap(cr, uri);
+                bitmap= RotateImg.Rotate(uri.getPath(),bitmap);
                 //Log.d(f.getPath(), "onActivityResult: Path");
-                PathImgLocationCard = uri.getPath();
-                viewImage.setImageBitmap(ImgLocationCard);
+                pictureUri[0] = uri.toString();
+                picturePath[0]  = uri.getPath();
+                viewImage.setImageBitmap(bitmap);
                 Toast.makeText(getApplicationContext()
                         , uri.getPath(), Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
@@ -641,12 +703,12 @@ public class LocationCard extends AppCompatActivity implements View.OnClickListe
             }
         }
         else if (requestCode == REQUEST_ADDRESS && resultCode == RESULT_OK) {
-                String address = data.getStringExtra("address");
-                latitude = data.getExtras().getDouble("latitude");
-                longitude = data.getExtras().getDouble("longitude");
-                Log.d("latitude",Double.toString(latitude));
-                Log.d("longitude",Double.toString(longitude));
-                SLatLng.setText(address + " (" + latitude + " , " + longitude + " )");
+                people.getAddressCard().setAddress(data.getStringExtra("address"));
+                people.getAddressCard().setLatitude(data.getExtras().getDouble("latitude"));
+                people.getAddressCard().setLongitude(data.getExtras().getDouble("longitude"));
+                Log.d("latitude",Double.toString(people.getAddressCard().getLatitude()));
+                Log.d("longitude",Double.toString(people.getAddressCard().getLongitude()));
+                SLatLng.setText(people.getAddressCard().getAddress() + " (" + people.getAddressCard().getLatitude() + " , " + people.getAddressCard().getLongitude() + " )");
 
         }
     }

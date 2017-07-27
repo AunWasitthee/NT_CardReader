@@ -59,8 +59,6 @@ import java.util.List;
 public class LocationNow extends AppCompatActivity implements View.OnClickListener {
     private ImageView viewImage;
     private Button BSelectPhoto;
-    private Bitmap bitmap;
-    private Bitmap ImgLocationCard;
     public static final int MY_PERMISSIONS_REQUEST_STORED = 90;
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 98;
 
@@ -72,10 +70,12 @@ public class LocationNow extends AppCompatActivity implements View.OnClickListen
     private Uri uri;
     private File f;
     private TextView SLatLng;
-    private Double latitude;
-    private Double longitude;
+
     private People people;
-    private AddressData addressData;
+    private ContactData contactData;
+    private String[] picturePath;
+    private String[] pictureUri;
+    private Bitmap locationNowBitmap;
     private EditText EHouseNumber, EMoo,ESoi,ERoad,ETambon,RAmphur,EProvince,EPostcode,ELandmark,EPhotourl;
     private Spinner mProvince,mAmphur,mTambon;
 
@@ -85,7 +85,6 @@ public class LocationNow extends AppCompatActivity implements View.OnClickListen
     private static final int REQUEST_PERMISSION_SETTING = 101;
     private boolean sentToSettings = false;
     private SharedPreferences permissionStatus;
-    private String PathImgLocationCard,PathImgLocationNow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,13 +95,13 @@ public class LocationNow extends AppCompatActivity implements View.OnClickListen
         getSupportActionBar().setTitle(R.string.LocationNow);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //new LocationCard.FeedTask().execute("dataprovince");
-        addressData = new AddressData();
+
         /*------------------- intent ข้อมูล --------------------------------------------------------------------------------------------------*/
         Intent intent = getIntent();
         people = (People) intent.getExtras().getSerializable("data");
-
-        PathImgLocationCard = getIntent().getExtras().getString("PathImgLocationCard");
-
+        contactData = (ContactData) intent.getExtras().getSerializable("contactData");
+        picturePath = intent.getStringArrayExtra("picturePath");
+        pictureUri = intent.getStringArrayExtra("pictureUri");
 
         permissionStatus = getSharedPreferences("permissionStatus",MODE_PRIVATE);
 
@@ -127,6 +126,24 @@ public class LocationNow extends AppCompatActivity implements View.OnClickListen
 
         BSelectPhoto=(Button)findViewById(R.id.BSelectPhoto);
         viewImage=(ImageView)findViewById(R.id.viewImage);
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        folderRef = storageRef.child("people/" + people.getProfileData().getCitizenID());
+        if (picturePath[1].equals("")) {
+            imageRef = folderRef.child(people.getProfileData().getCitizenID() + "_LocationNow");
+            downloadInMemory();
+        }
+        else if(!pictureUri[1].equals("")){
+            uri = Uri.parse(pictureUri[1]);
+            try {
+                locationNowBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                locationNowBitmap = RotateImg.Rotate(picturePath[1],locationNowBitmap);
+                //Log.d(f.getPath(), "onActivityResult: Path");
+                //picturePath[1]  = uri.getPath();
+                viewImage.setImageBitmap(locationNowBitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         BSelectPhoto.setOnClickListener(LocationNow.this);
         /*------------------- TextView Next --------------------------------------------------------------------------------------------------*/
         TextView Next = (TextView) findViewById(R.id.Next);
@@ -163,16 +180,10 @@ public class LocationNow extends AppCompatActivity implements View.OnClickListen
             ELandmark.setText(people.getAddressNow().getLandmark());
 
         SLatLng = (TextView) findViewById(R.id.SLatLng);
-        if(people.getAddressNow() !=null && people.getAddressNow().getLatitude()!=null&&people.getAddressNow().getLongitude()!=null)
-            SLatLng.setText("( " + String.valueOf(people.getAddressNow().getLatitude()) +", "+String.valueOf(people.getAddressNow().getLongitude() +" )"));
+        if(people.getAddressNow() !=null && people.getAddressNow().getAddress() != null && people.getAddressNow().getLatitude()!=null&&people.getAddressNow().getLongitude()!=null)
+            SLatLng.setText(people.getAddressNow().getAddress()+ " ( " + String.valueOf(people.getAddressNow().getLatitude()) +", "+String.valueOf(people.getAddressNow().getLongitude() +" )"));
 //
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-        folderRef = storageRef.child("photos");
-//        imageRef = folderRef.child("firebase.png");
 
-        //StorageReference storageRef = storage.getReference();
-        imageRef = folderRef.child(people.getProfileData().getCitizenID() +"_LocationNow.jpg");
-        downloadInMemory();
 
 
 
@@ -479,39 +490,74 @@ public class LocationNow extends AppCompatActivity implements View.OnClickListen
                 case R.id.Next:
                     Intent intent2 = new Intent(LocationNow.this, EmergencyContact.class);
                     //intent.putExtra("data", cardFirebase);
-                    addressData.setHouseNumber(EHouseNumber.getText().toString());
-                    addressData.setMoo(EMoo.getText().toString());
-                    addressData.setSoi(ESoi.getText().toString());
-                    addressData.setRoad(ERoad.getText().toString());
+                    people.getAddressNow().setHouseNumber(EHouseNumber.getText().toString());
+                    people.getAddressNow().setMoo(EMoo.getText().toString());
+                    people.getAddressNow().setSoi(ESoi.getText().toString());
+                    people.getAddressNow().setRoad(ERoad.getText().toString());
 
-                    addressData.setProvince(mProvince.getSelectedItem().toString());
-                    addressData.setAmphur(mAmphur.getSelectedItem().toString());
-                    addressData.setTambon(mTambon.getSelectedItem().toString());
+                    people.getAddressNow().setProvince(mProvince.getSelectedItem().toString());
+                    people.getAddressNow().setAmphur(mAmphur.getSelectedItem().toString());
+                    people.getAddressNow().setTambon(mTambon.getSelectedItem().toString());
 
-                    addressData.setPostcode(EPostcode.getText().toString());
-                    addressData.setLandmark(ELandmark.getText().toString());
-                    addressData.setLatitude(latitude);
-                    addressData.setLongitude(longitude);
-                    people.setAddressNow(addressData);
-                    Log.d(people.getAddressNow().getHouseNumber(), "LocationNow: ");
-                    Log.d(people.getAddressNow().getMoo(), "LocationNow: ");
-                    Log.d(people.getAddressNow().getSoi(), "LocationNowSoi: ");
-                    Log.d(people.getAddressNow().getRoad(), "LocationNow: ");
-                    Log.d(people.getAddressNow().getPostcode(), "LocationNow: ");
-                    Log.d(people.getAddressNow().getLandmark(), "LocationNow: ");
+                    people.getAddressNow().setPostcode(EPostcode.getText().toString());
+                    people.getAddressNow().setLandmark(ELandmark.getText().toString());
+
+                    //people.setAddressNow(addressData);
+//                    Log.d(people.getAddressNow().getHouseNumber(), "LocationNow: ");
+//                    Log.d(people.getAddressNow().getMoo(), "LocationNow: ");
+//                    Log.d(people.getAddressNow().getSoi(), "LocationNowSoi: ");
+//                    Log.d(people.getAddressNow().getRoad(), "LocationNow: ");
+//                    Log.d(people.getAddressNow().getPostcode(), "LocationNow: ");
+//                    Log.d(people.getAddressNow().getLandmark(), "LocationNow: ");
                     //Log.d(people.getAddressCard().getLatitude().toString(), "LocationCard: ");
                     //Log.d(people.getAddressCard().getLongitude().toString(), "LocationCard: ");
                     intent2.putExtra("data", people);
-
-                    intent2.putExtra("PathImgLocationCard",PathImgLocationCard);
-                    intent2.putExtra("PathImgLocationNow",PathImgLocationNow);
+                    intent2.putExtra("contactData",contactData);
+                    intent2.putExtra("picturePath",picturePath);
+                    intent2.putExtra("pictureUri",pictureUri);
                     startActivity(intent2);
+                    finish();
                     break;
                 case R.id.BSelectPhoto:
                     selectImage();
                     break;
             }
         }
+
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent2 = new Intent(LocationNow.this, LocationCard.class);
+        //intent.putExtra("data", cardFirebase);
+        people.getAddressNow().setHouseNumber(EHouseNumber.getText().toString());
+        people.getAddressNow().setMoo(EMoo.getText().toString());
+        people.getAddressNow().setSoi(ESoi.getText().toString());
+        people.getAddressNow().setRoad(ERoad.getText().toString());
+
+        people.getAddressNow().setProvince(mProvince.getSelectedItem().toString());
+        people.getAddressNow().setAmphur(mAmphur.getSelectedItem().toString());
+        people.getAddressNow().setTambon(mTambon.getSelectedItem().toString());
+
+        people.getAddressNow().setPostcode(EPostcode.getText().toString());
+        people.getAddressNow().setLandmark(ELandmark.getText().toString());
+
+        //people.setAddressNow(addressData);
+//        Log.d(people.getAddressNow().getHouseNumber(), "LocationNow: ");
+//        Log.d(people.getAddressNow().getMoo(), "LocationNow: ");
+//        Log.d(people.getAddressNow().getSoi(), "LocationNowSoi: ");
+//        Log.d(people.getAddressNow().getRoad(), "LocationNow: ");
+//        Log.d(people.getAddressNow().getPostcode(), "LocationNow: ");
+//        Log.d(people.getAddressNow().getLandmark(), "LocationNow: ");
+        //Log.d(people.getAddressCard().getLatitude().toString(), "LocationCard: ");
+        //Log.d(people.getAddressCard().getLongitude().toString(), "LocationCard: ");
+        intent2.putExtra("data", people);
+        intent2.putExtra("contactData", contactData);
+        intent2.putExtra("picturePath",picturePath);
+        intent2.putExtra("pictureUri",pictureUri);
+        startActivity(intent2);
+        Log.e("onPressBack","Hello World3");
+        finish();
+
+    }
     private void selectImage() {
         final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };
 
@@ -535,9 +581,9 @@ public class LocationNow extends AppCompatActivity implements View.OnClickListen
 
 
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        String timeStamp =
-                                new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                        String imageFileName = "IMG_" + timeStamp + ".jpg";
+//                        String timeStamp =
+//                                new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                        String imageFileName = people.getProfileData().getCitizenID() + "_LocationNow" + ".jpg";
                         f = new File(Environment.getExternalStorageDirectory()
                                 , "DCIM/Camera/" + imageFileName);
                         uri = Uri.fromFile(f);
@@ -578,17 +624,17 @@ public class LocationNow extends AppCompatActivity implements View.OnClickListen
         Log.d("onActivityResult", "onActivityResult: ");
         if (requestCode == REQUEST_GALLERY && resultCode == RESULT_OK) {
             uri = data.getData();
-
-            PathImgLocationNow = Helper.getPath(this, Uri.parse(data.getData().toString()));
+            pictureUri[1] = uri.toString();
+            picturePath[1]  = Helper.getPath(this, Uri.parse(data.getData().toString()));
             //File imageFile = new File(getRealPathFromURI(uri));
             Log.d(uri.toString(), "onActivityResult: ");
             Log.d(uri.getPath(), "onActivityResult: ");
-            Log.d(PathImgLocationNow, "onActivityResult: ");
+            Log.d(picturePath[1], "onActivityResult: ");
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-                bitmap= RotateImg.Rotate(PathImgLocationNow,bitmap);
+                locationNowBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),uri);
+                locationNowBitmap= RotateImg.Rotate(picturePath[1],locationNowBitmap);
                 Log.d("bitmap", "onActivityResult: ");
-                viewImage.setImageBitmap(bitmap);
+                viewImage.setImageBitmap(locationNowBitmap);
             } catch (FileNotFoundException e) {
                 Log.d("FileNotFoundException", "onActivityResult: ");
                 e.printStackTrace();
@@ -598,18 +644,15 @@ public class LocationNow extends AppCompatActivity implements View.OnClickListen
             }
         }
         else if (requestCode == REQUEST_CAMERA && resultCode == RESULT_OK){
-
             getContentResolver().notifyChange(uri, null);
             ContentResolver cr = getContentResolver();
-
-
             try {
-
-                bitmap = MediaStore.Images.Media.getBitmap(cr, uri);
-                bitmap = RotateImg.Rotate(uri.getPath(),bitmap);
+                locationNowBitmap = MediaStore.Images.Media.getBitmap(cr, uri);
+                locationNowBitmap = RotateImg.Rotate(uri.getPath(),locationNowBitmap);
                 //Log.d(f.getPath(), "onActivityResult: Path");
-                PathImgLocationNow = uri.getPath();
-                viewImage.setImageBitmap(bitmap);
+                pictureUri[1] = uri.toString();
+                picturePath[1] =uri.getPath();
+                viewImage.setImageBitmap(locationNowBitmap);
                 Toast.makeText(getApplicationContext()
                         , uri.getPath(), Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
@@ -617,12 +660,12 @@ public class LocationNow extends AppCompatActivity implements View.OnClickListen
             }
         }
         else if (requestCode == REQUEST_ADDRESS && resultCode == RESULT_OK) {
-            String address = data.getStringExtra("address");
-            latitude = data.getExtras().getDouble("latitude");
-            longitude = data.getExtras().getDouble("longitude");
-            Log.d("latitude",Double.toString(latitude));
-            Log.d("longitude",Double.toString(longitude));
-            SLatLng.setText(address + " (" + latitude + " , " + longitude + " )");
+            people.getAddressNow().setAddress(data.getStringExtra("address"));
+            people.getAddressNow().setLatitude(data.getExtras().getDouble("latitude"));
+            people.getAddressNow().setLongitude(data.getExtras().getDouble("longitude"));
+            Log.d("latitude",Double.toString(people.getAddressNow().getLatitude()));
+            Log.d("longitude",Double.toString(people.getAddressNow().getLongitude()));
+            SLatLng.setText(people.getAddressNow().getAddress() + " (" + people.getAddressNow().getLatitude() + " , " + people.getAddressNow().getLongitude() + " )");
 
         }
     }

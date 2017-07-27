@@ -68,8 +68,6 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
 
     private ImageView viewImage;
     private Button BSelectPhoto;
-    private Bitmap bitmap;
-    private Bitmap ImgLocationCard;
     public static final int MY_PERMISSIONS_REQUEST_STORED = 90;
     public static final int MY_PERMISSIONS_REQUEST_CAMERA = 98;
 
@@ -79,8 +77,7 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
     private Uri uri;
     private File f;
     private TextView SLatLng;
-    private Double latitude;
-    private Double longitude;
+
     // Write a message to the database
     protected FirebaseDatabase database = FirebaseDatabase.getInstance();
     protected DatabaseReference myRef = database.getReference();
@@ -88,8 +85,10 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
     private StorageReference folderRef, imageRef;
     private Spinner mRelationship,mSex;
     private People people;
-    private AddressData addressData;
     private ContactData contactData;
+    private String[] picturePath;
+    private String[] pictureUri;
+    private Bitmap emergencyContactBitmap;
     private String contactID;
     private String peopleKey;
     private EditText ECitizenID, ETitleTH,EFirstName ,ELastName,ETell,EHomeTell, EHouseNumber, EMoo,ESoi,ERoad,ETambon,RAmphur,EProvince,EPostcode,ELandmark,ELatitude,ELongtitude,EPhotourl;
@@ -102,7 +101,6 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
     private boolean sentToSettings = false;
     private SharedPreferences permissionStatus;
 
-    private String PathImgLocationCard,PathImgLocationNow,PathImgLocationEmergency;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,19 +116,19 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
         //StorageReference storageRef = storage.getReference();
         //imageRef = folderRef.child(people.getProfileData().getCitizenID() +"_LocationCard.jpg");
 
-        addressData = new AddressData();
+
         contactData = new ContactData();
         /*------------------- intent ข้อมูล --------------------------------------------------------------------------------------------------*/
         Intent intent = getIntent();
         people = (People) intent.getExtras().getSerializable("data");
-
+        contactData = (ContactData) intent.getExtras().getSerializable("contactData");
         permissionStatus = getSharedPreferences("permissionStatus",MODE_PRIVATE);
-        PathImgLocationCard = getIntent().getExtras().getString("PathImgLocationCard");
-        PathImgLocationNow = getIntent().getExtras().getString("PathImgLocationNow");
+        picturePath = intent.getStringArrayExtra("picturePath");
+        pictureUri =  intent.getStringArrayExtra("pictureUri");
 
 
-        Log.d(PathImgLocationCard, "PathImgLocationCard ");
-        Log.d(PathImgLocationNow, "PathImgLocationNow");
+        Log.d(picturePath[0], "PathImgLocationCard ");
+        Log.d(picturePath[1], "PathImgLocationNow");
 
 
         Log.d(people.getAddressNow().getHouseNumber(), "LocationNow: ");
@@ -139,17 +137,93 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
         Log.d(people.getAddressNow().getRoad(), "LocationNow: ");
         Log.d(people.getAddressNow().getPostcode(), "LocationNow: ");
         Log.d(people.getAddressNow().getLandmark(), "LocationNow: ");
+/*------------------- Button BLatLng --------------------------------------------------------------------------------------------------*/
+        Button BLatLng = (Button) findViewById(R.id.BLatLng) ;
+        BLatLng.setOnClickListener(EmergencyContact.this);
+/*------------------- TextView ------------------------------------*/
+        ECitizenID = (EditText) findViewById(R.id.ECitizenID);
+        ETitleTH = (EditText) findViewById(R.id.ETitleTH);
+        EFirstName = (EditText) findViewById(R.id.EFirstName);
+        ELastName = (EditText) findViewById(R.id.ELastName);
+        ETell = (EditText) findViewById(R.id.ETell);
+        EHomeTell = (EditText) findViewById(R.id.EHomeTell);
 
+        EHouseNumber = (EditText) findViewById(R.id.EHouseNumber);
+        EMoo = (EditText) findViewById(R.id.EMoo);
+        ESoi = (EditText) findViewById(R.id.ESoi);
+        ERoad = (EditText) findViewById(R.id.ERoad);
 
-        //FirebaseDatabase database = FirebaseDatabase.getInstance();
-        //DatabaseReference ref = database.getReference("EmergencyContact").child(people.getContactID());
-        findContactDataOnFirebase();
+        EPostcode = (EditText) findViewById(R.id.EPostCode);
+        ELandmark = (EditText) findViewById(R.id.ELanmark);
+        SLatLng = (TextView) findViewById(R.id.SLatLng);
 
+        if (contactData!=null) {
+            if (contactData.getCitizenID() != null)
+                ECitizenID.setText(contactData.getCitizenID());
+
+            if (contactData.getPrefixThai() != null)
+                ETitleTH.setText(contactData.getPrefixThai());
+
+            if (contactData.getFirstNameThai() != null)
+                EFirstName.setText(contactData.getFirstNameThai());
+
+            if (contactData.getLastNameThai() != null)
+                ELastName.setText(contactData.getLastNameThai());
+
+            if (contactData.getTell() != null)
+                ETell.setText(contactData.getTell());
+
+            if (contactData.getHometell() != null)
+                EHomeTell.setText(contactData.getHometell());
+            if (contactData.getAddressData() != null) {
+                if (contactData.getAddressData().getHouseNumber() != null)
+                    EHouseNumber.setText(contactData.getAddressData().getHouseNumber());
+
+                if (contactData.getAddressData().getMoo() != null)
+                    EMoo.setText(contactData.getAddressData().getMoo());
+
+                if (contactData.getAddressData().getSoi() != null)
+                    ESoi.setText(contactData.getAddressData().getSoi());
+
+                if (contactData.getAddressData().getRoad() != null)
+                    ERoad.setText(contactData.getAddressData().getRoad());
+
+                if (contactData.getAddressData().getPostcode() != null)
+                    EPostcode.setText(contactData.getAddressData().getPostcode());
+
+                if (contactData.getAddressData().getLandmark() != null)
+                    ELandmark.setText(contactData.getAddressData().getLandmark());
+                if (contactData.getAddressData().getAddress() != null && contactData.getAddressData().getLatitude() != null && contactData.getAddressData().getLongitude() != null )
+                    SLatLng.setText(contactData.getAddressData().getAddress()+ " ( " + String.valueOf(contactData.getAddressData().getLatitude()) +", "+String.valueOf(contactData.getAddressData().getLongitude() +" )"));
+
+            }
+        }
+        /*------------------- Firebase ------------------------------------*/
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
 
 //////////////////
         /*------------------- Photo--------------------------------------------------*/
         BSelectPhoto=(Button)findViewById(R.id.BSelectPhoto);
         viewImage=(ImageView)findViewById(R.id.viewImage);
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        folderRef = storageRef.child("contact/"+ contactData.getCitizenID());
+        if (picturePath[2].equals("")) {
+            imageRef = folderRef.child(contactData.getCitizenID() + "_Location");
+            downloadInMemory();
+        }
+        if(!pictureUri[2].equals("")){
+            uri = Uri.parse(pictureUri[2]);
+            try {
+                emergencyContactBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                emergencyContactBitmap = RotateImg.Rotate(picturePath[2],emergencyContactBitmap);
+                //Log.d(f.getPath(), "onActivityResult: Path");
+                //picturePath[2]  = uri.getPath();
+                viewImage.setImageBitmap(emergencyContactBitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         BSelectPhoto.setOnClickListener(EmergencyContact.this);
             /*------------------- TextView Update --------------------------------------------------------------------------------------------------*/
             TextView Update = (TextView) findViewById(R.id.Update);
@@ -158,8 +232,31 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
                 /*------------------- Spinner Relationship--------------------------------------------------------------------------------------------------*/
         String[] Relationship = getResources().getStringArray(R.array.Relationship);
         mRelationship = (Spinner) findViewById(R.id.Relationship);
-        ArrayAdapter<String> adapterRelationship = new ArrayAdapter<String>(EmergencyContact.this, android.R.layout.simple_dropdown_item_1line, Relationship);
+        if(contactData !=null && contactData.getRelationship()!=null){
+            Relationship[Relationship.length-1] = contactData.getRelationship();
+        }
+        ArrayAdapter<String> adapterRelationship = new ArrayAdapter<String>(EmergencyContact.this, android.R.layout.simple_dropdown_item_1line, Relationship){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                Log.d(getItem(getCount()), "getView: ");
+                View v = super.getView(position, convertView, parent);
+                if (position == getCount()) {
+                    ((TextView) v.findViewById(android.R.id.text1)).setText(getItem(getCount()));
+                    ((TextView) v.findViewById(android.R.id.text1)).setTextSize(14);
+                    //((TextView)v.findViewById(android.R.id.text1)).setHint(getItem(getCount())); //"Hint to be displayed"
+                }
+                return v;
+            }
+
+            @Override
+            public int getCount() {
+                return super.getCount() - 1; // you dont display last item. It is used as hint.
+            }
+        };
+        adapterRelationship.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mRelationship.setAdapter(adapterRelationship);
+        mRelationship.setSelection(adapterRelationship.getCount());
+
         mRelationship.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
@@ -185,8 +282,32 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
                 /*------------------- Spinner Sex--------------------------------------------------------------------------------------------------*/
         String[] Sex = getResources().getStringArray(R.array.Sex);
         mSex = (Spinner) findViewById(R.id.Sex);
-        ArrayAdapter<String> adapterSex = new ArrayAdapter<String>(EmergencyContact.this, android.R.layout.simple_dropdown_item_1line, Sex);
+        if(contactData !=null && contactData.getSex()!=null){
+            Sex[Sex.length-1] = contactData.getSex();
+        }
+        ArrayAdapter<String> adapterSex = new ArrayAdapter<String>(EmergencyContact.this, android.R.layout.simple_dropdown_item_1line, Sex){
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                Log.d(getItem(getCount()), "getView: ");
+                View v = super.getView(position, convertView, parent);
+                if (position == getCount()) {
+                    ((TextView) v.findViewById(android.R.id.text1)).setText(getItem(getCount()));
+                    ((TextView) v.findViewById(android.R.id.text1)).setTextSize(14);
+                    //((TextView)v.findViewById(android.R.id.text1)).setHint(getItem(getCount())); //"Hint to be displayed"
+                }
+                return v;
+            }
+
+            @Override
+            public int getCount() {
+                return super.getCount() - 1; // you dont display last item. It is used as hint.
+            }
+        };
+        adapterSex.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
         mSex.setAdapter(adapterSex);
+        mSex.setSelection(adapterSex.getCount());
         mSex.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
@@ -209,26 +330,7 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
                 Toast.makeText(EmergencyContact.this, "You Must Buy-In To Play", Toast.LENGTH_SHORT).show();
             } // end onNothingSelected method
         });
-        /*------------------- Button BLatLng --------------------------------------------------------------------------------------------------*/
-            Button BLatLng = (Button) findViewById(R.id.BLatLng) ;
-            BLatLng.setOnClickListener(EmergencyContact.this);
-/*------------------- TextView ------------------------------------*/
-        ECitizenID = (EditText) findViewById(R.id.ECitizenID);
-        ETitleTH = (EditText) findViewById(R.id.ETitleTH);
-        EFirstName = (EditText) findViewById(R.id.EFirstName);
-        ELastName = (EditText) findViewById(R.id.ELastName);
-        ETell = (EditText) findViewById(R.id.ETell);
-        EHomeTell = (EditText) findViewById(R.id.EHomeTell);
 
-        EHouseNumber = (EditText) findViewById(R.id.EHouseNumber);
-        EMoo = (EditText) findViewById(R.id.EMoo);
-        ESoi = (EditText) findViewById(R.id.ESoi);
-        ERoad = (EditText) findViewById(R.id.ERoad);
-
-        EPostcode = (EditText) findViewById(R.id.EPostCode);
-        ELandmark = (EditText) findViewById(R.id.ELanmark);
-
-        SLatLng = (TextView) findViewById(R.id.SLatLng);
 /*------------------- Spinner Province--------------------------------------------------------------------------------------------------*/
         mProvince = (Spinner) findViewById(R.id.Province);
 
@@ -284,7 +386,15 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
         };
         adapterProvince.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mProvince.setAdapter(adapterProvince);
-        mProvince.setSelection(adapterProvince.getCount());
+        int indexProvince;
+        if(contactData != null && contactData.getAddressData()!=null&&contactData.getAddressData().getProvince()!=null){
+            //Province[Province.length-1] = people.getAddressCard().getProvince();
+            indexProvince = Arrays.asList(Province).indexOf(people.getAddressNow().getProvince());
+            mProvince.setSelection(indexProvince);
+        }
+        else {
+            mProvince.setSelection(adapterProvince.getCount());
+        }
         mProvince.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View v, int i, long l) {
@@ -357,76 +467,6 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
         });
     }
 
-    private void findContactDataOnFirebase() {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        Query query = reference.child("EmergencyContact").orderByChild(people.getContactID());
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    // dataSnapshot is the "issue" node with all children with id 0
-                    for (DataSnapshot issue : dataSnapshot.getChildren()) {
-                        contactData = issue.getValue(ContactData.class);
-                        // do something with the individual "issues"
-                        Log.d("findContactOnFirebase", "Success ");
-
-                        setDisplayContactData(contactData);
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                //textView.setText(databaseError.getMessage());
-                Log.d("findContactOnFirebase", databaseError.getMessage());
-
-            }
-        });
-    }
-
-    private void setDisplayContactData(ContactData contactData) {
-
-        if(contactData.getCitizenID() !=null )
-            ECitizenID.setText(contactData.getCitizenID());
-
-        if(contactData.getPrefixThai() !=null )
-            ETitleTH.setText(contactData.getPrefixThai());
-
-        if(contactData.getFirstNameThai() !=null )
-            EFirstName.setText(contactData.getFirstNameThai());
-
-        if(contactData.getLastNameThai() !=null )
-            ELastName.setText(contactData.getLastNameThai());
-
-        if(contactData.getTell() !=null )
-            ETell.setText(contactData.getTell());
-
-        if(contactData.getHometell() !=null )
-            EHomeTell.setText(contactData.getHometell());
-
-        if (contactData.getAddressData() !=null ) {
-            if (contactData.getAddressData().getHouseNumber() != null)
-                EHouseNumber.setText(contactData.getAddressData().getHouseNumber());
-
-            if (contactData.getAddressData().getMoo() != null)
-                EMoo.setText(contactData.getAddressData().getMoo());
-
-            if (contactData.getAddressData().getSoi() != null)
-                ESoi.setText(contactData.getAddressData().getSoi());
-
-            if (contactData.getAddressData().getRoad() != null)
-                ERoad.setText(contactData.getAddressData().getRoad());
-
-            if (contactData.getAddressData().getPostcode() != null)
-                EPostcode.setText(contactData.getAddressData().getPostcode());
-
-            if (contactData.getAddressData().getLandmark() != null)
-                ELandmark.setText(contactData.getAddressData().getLandmark());
-
-            if (contactData.getAddressData().getLatitude() != null && contactData.getAddressData().getLongitude() != null)
-                SLatLng.setText("( " + String.valueOf(contactData.getAddressData().getLatitude()) + ", " + String.valueOf(contactData.getAddressData().getLongitude() + " )"));
-        }
-    }
-
     public void spinnerAmphur(final String[] amphur, final String province_id){
         Log.d(amphur[0], "spinnerAmphur: AAAAAA");
         mAmphur = (Spinner) findViewById(R.id.Amphur);
@@ -451,7 +491,15 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
         };
         adapterAmphur.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mAmphur.setAdapter(adapterAmphur);
-        mAmphur.setSelection(adapterAmphur.getCount());
+        int indexAmphur;
+        if(contactData != null && contactData.getAddressData()!=null&&contactData.getAddressData().getAmphur()!=null){
+            //Amphur[Amphur.length-1] = people.getAddressCard().getAmphur();
+            indexAmphur = Arrays.asList(Amphur).indexOf(people.getAddressNow().getAmphur());
+            mAmphur.setSelection(indexAmphur);
+        }
+        else {
+            mAmphur.setSelection(adapterAmphur.getCount());
+        }
         mAmphur.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View v, int i, long l) {
@@ -522,8 +570,6 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
             } // end onNothingSelected method
         });
     }
-
-
     public void spinnerTambon(String[] Tambon){
 
         mTambon = (Spinner) findViewById(R.id.Tambon);
@@ -547,12 +593,19 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
         };
         adapterTambon.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mTambon.setAdapter(adapterTambon);
-        mTambon.setSelection(adapterTambon.getCount());
+        int indexTambon;
+        if(contactData != null && contactData.getAddressData()!=null&&contactData.getAddressData().getTambon()!=null){
+            //Amphur[Amphur.length-1] = people.getAddressCard().getAmphur();
+            indexTambon = Arrays.asList(Tambon).indexOf(people.getAddressNow().getTambon());
+            mTambon.setSelection(indexTambon);
+        }
+        else {
+            mTambon.setSelection(adapterTambon.getCount());
+        }
         mTambon.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View v, int i, long l)
             {
-
                 TextView myText = (TextView) v;
                 Toast.makeText(EmergencyContact.this, "You Selected "+myText.getText(), Toast.LENGTH_SHORT).show();
                 ((TextView) adapterView.getChildAt(0)).setTextSize(14);
@@ -580,20 +633,21 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
                 break;
 
             case R.id.Update: {
+                if (!picturePath[0].equals(""))
+                    uploadFromFile(picturePath[0],"people/" + people.getProfileData().getCitizenID(),people.getProfileData().getCitizenID() + "_LocationCard");
+                if (!picturePath[1].equals(""))
+                    uploadFromFile(picturePath[1],"people/" + people.getProfileData().getCitizenID() ,people.getProfileData().getCitizenID() + "_LocationNow");
+                if (!picturePath[2].equals(""))
+                    uploadFromFile(picturePath[2],"contact/"+ contactData.getCitizenID() ,contactData.getCitizenID() + "_Location");
                 contactData.getAddressData().setHouseNumber(EHouseNumber.getText().toString());
                 contactData.getAddressData().setMoo(EMoo.getText().toString());
                 contactData.getAddressData().setSoi(ESoi.getText().toString());
                 contactData.getAddressData().setRoad(ERoad.getText().toString());
                 contactData.getAddressData().setPostcode(EPostcode.getText().toString());
                 contactData.getAddressData().setLandmark(ELandmark.getText().toString());
-
                 contactData.getAddressData().setProvince(mProvince.getSelectedItem().toString());
                 contactData.getAddressData().setAmphur(mAmphur.getSelectedItem().toString());
                 contactData.getAddressData().setTambon(mTambon.getSelectedItem().toString());
-                if (latitude!=null)
-                    contactData.getAddressData().setLatitude(latitude);
-                if (longitude!=null)
-                    contactData.getAddressData().setLongitude(longitude);
 
                 contactData.setCitizenID(ECitizenID.getText().toString());
                 contactData.setPrefixThai(ETitleTH.getText().toString());
@@ -621,6 +675,36 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
                 Log.d(contactData.getAddressData().getLandmark(), "Emergency: ");
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
 
+//                Query query = reference.child("EmergencyContact").orderByChild("citizenID").equalTo(contactData.getCitizenID());
+//                query.addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot dataSnapshot) {
+//                        if (dataSnapshot.exists()) {
+//                            // dataSnapshot is the "issue" node with all children with id 0
+//                            for (DataSnapshot issue : dataSnapshot.getChildren()) {
+//                                contactKey = issue.getKey();
+//                                // do something with the individual "issues"
+//
+//
+//
+//                            }
+//
+//                        } else {
+//                            contactKey = myRef.child("EmergencyContact").push().getKey();
+//                            people.setContactID(contactKey);
+//
+//
+//                        }
+//                        myRef.child("EmergencyContact").child(contactKey).setValue(contactData);
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//
+//                    }
+//
+//                });
+
                 if (people.getPeopleKey() == null) {
                     peopleKey = myRef.child("Peoplee").push().getKey();
                     people.setPeopleKey(peopleKey);
@@ -628,18 +712,49 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
                     people.setContactID(contactID);
                 }
                 else if (people.getContactID() == null){
-
                     contactID = myRef.child("EmergencyContact").push().getKey();
                     people.setContactID(contactID);
-
                 }
                     myRef.child("EmergencyContact").child(people.getContactID()).setValue(contactData);
                     myRef.child("Peoplee").child(people.getPeopleKey()).setValue(people);
 
-
             }
         }
     }
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent2 = new Intent(EmergencyContact.this, LocationNow.class);
+        contactData.getAddressData().setHouseNumber(EHouseNumber.getText().toString());
+        contactData.getAddressData().setMoo(EMoo.getText().toString());
+        contactData.getAddressData().setSoi(ESoi.getText().toString());
+        contactData.getAddressData().setRoad(ERoad.getText().toString());
+        contactData.getAddressData().setPostcode(EPostcode.getText().toString());
+        contactData.getAddressData().setLandmark(ELandmark.getText().toString());
+
+        contactData.getAddressData().setProvince(mProvince.getSelectedItem().toString());
+        contactData.getAddressData().setAmphur(mAmphur.getSelectedItem().toString());
+        contactData.getAddressData().setTambon(mTambon.getSelectedItem().toString());
+
+        contactData.setCitizenID(ECitizenID.getText().toString());
+        contactData.setPrefixThai(ETitleTH.getText().toString());
+        contactData.setFirstNameThai(EFirstName.getText().toString());
+        contactData.setLastNameThai(ELastName.getText().toString());
+
+        contactData.setTell(ETell.getText().toString());
+        contactData.setHometell(EHomeTell.getText().toString());
+        contactData.setRelationship(mRelationship.getSelectedItem().toString());
+        contactData.setSex(mSex.getSelectedItem().toString());
+        //people.setAddressCard(people.getAddressCard());
+        people.setContactID(contactID);
+        intent2.putExtra("contactData", contactData);
+        intent2.putExtra("data", people);
+        intent2.putExtra("picturePath",picturePath);
+        intent2.putExtra("pictureUri",pictureUri);
+        startActivity(intent2);
+        Log.e("onPressBack","Hello World4");
+        finish();
+    }
+
     private void selectImage() {
         final CharSequence[] options = { "Take Photo", "Choose from Gallery","Cancel" };
 
@@ -663,9 +778,9 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
 
 
                         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        String timeStamp =
-                                new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                        String imageFileName = "IMG_" + timeStamp + ".jpg";
+//                        String timeStamp =
+//                                new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                        String imageFileName = contactData.getCitizenID() + "_Location" + ".jpg";
                         f = new File(Environment.getExternalStorageDirectory()
                                 , "DCIM/Camera/" + imageFileName);
                         uri = Uri.fromFile(f);
@@ -706,17 +821,17 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
         Log.d("onActivityResult", "onActivityResult: ");
         if (requestCode == REQUEST_GALLERY && resultCode == RESULT_OK) {
             uri = data.getData();
-
-            PathImgLocationEmergency = Helper.getPath(this, Uri.parse(data.getData().toString()));
+            pictureUri[2] = uri.toString();
+            picturePath[2] = Helper.getPath(this, Uri.parse(data.getData().toString()));
             //File imageFile = new File(getRealPathFromURI(uri));
             Log.d(uri.toString(), "onActivityResult: ");
             Log.d(uri.getPath(), "onActivityResult: ");
-            Log.d(PathImgLocationEmergency, "onActivityResult: ");
+            Log.d(picturePath[2], "onActivityResult: ");
             try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-                bitmap= RotateImg.Rotate(PathImgLocationEmergency,bitmap);
-                Log.d("bitmap", "onActivityResult: ");
-                viewImage.setImageBitmap(bitmap);
+                emergencyContactBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+                emergencyContactBitmap= RotateImg.Rotate(picturePath[2],emergencyContactBitmap);
+                Log.d("pictureBitmap[2]", "onActivityResult: ");
+                viewImage.setImageBitmap(emergencyContactBitmap);
             } catch (FileNotFoundException e) {
                 Log.d("FileNotFoundException", "onActivityResult: ");
                 e.printStackTrace();
@@ -733,11 +848,12 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
 
             try {
 
-                bitmap = MediaStore.Images.Media.getBitmap(cr, uri);
-                bitmap = RotateImg.Rotate(uri.getPath(),bitmap);
+                emergencyContactBitmap = MediaStore.Images.Media.getBitmap(cr, uri);
+                emergencyContactBitmap = RotateImg.Rotate(uri.getPath(),emergencyContactBitmap);
                 //Log.d(f.getPath(), "onActivityResult: Path");
-                PathImgLocationEmergency = uri.getPath();
-                viewImage.setImageBitmap(bitmap);
+                pictureUri[2] = uri.toString();
+                picturePath[2] = uri.getPath();
+                viewImage.setImageBitmap(emergencyContactBitmap);
                 Toast.makeText(getApplicationContext()
                         , uri.getPath(), Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
@@ -745,12 +861,12 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
             }
         }
         else if (requestCode == REQUEST_ADDRESS && resultCode == RESULT_OK) {
-            String address = data.getStringExtra("address");
-            latitude = data.getExtras().getDouble("latitude");
-            longitude = data.getExtras().getDouble("longitude");
-            Log.d("latitude",Double.toString(latitude));
-            Log.d("longitude",Double.toString(longitude));
-            SLatLng.setText(address + " (" + latitude + " , " + longitude + " )");
+            contactData.getAddressData().setAddress(data.getStringExtra("address"));
+            contactData.getAddressData().setLatitude(data.getExtras().getDouble("latitude"));
+            contactData.getAddressData().setLongitude(data.getExtras().getDouble("longitude"));
+            Log.d("latitude",Double.toString(contactData.getAddressData().getLatitude()));
+            Log.d("longitude",Double.toString(contactData.getAddressData().getLongitude()));
+            SLatLng.setText(contactData.getAddressData().getAddress() + " (" + contactData.getAddressData().getLatitude() + " , " + contactData.getAddressData().getLongitude() + " )");
 
         }
     }
@@ -970,15 +1086,54 @@ public class EmergencyContact extends AppCompatActivity implements View.OnClickL
         }
     }
 
-    private void uploadFromFile(String path) {
+    private void uploadFromFile(String path, String child, String name) {
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+        folderRef = storageRef.child(child);
+        imageRef = folderRef.child(name);
         Uri file = Uri.fromFile(new File(path));
         //StorageReference imageRef = folderRef.child(file.getLastPathSegment());
         //StorageMetadata metadata = new StorageMetadata.Builder().setContentType("image/jpg").build();
         //UploadTask uploadTask = imageRef.putFile(file, metadata);
-        imageRef.putFile(file);
-
+        //imageRef.putFile(file);
+        mUploadTask = imageRef.putFile(file);
+        mUploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.d("onFailure: ", "FAIL");
+//                Helper.dismissProgressDialog();
+//                mTextView.setText(String.format("Failure: %s", exception.getMessage()));
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Log.d("onFailure: ", "Success");
+//                Helper.dismissProgressDialog();
+//                findViewById(R.id.button_upload_resume).setVisibility(View.GONE);
+//                mTextView.setText(taskSnapshot.getDownloadUrl().toString());
+            }
+        });
     }
 
+    private void downloadInMemory() {
+        //long ONE_MEGABYTE = 1024 * 1024;
+        // Helper.showDialog(this);
+        imageRef.getBytes(Long.MAX_VALUE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                // Helper.dismissDialog();
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                viewImage.setImageBitmap(bitmap);
+                Log.d("BIT", "onSuccess: ");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                //Helper.dismissDialog();
+                // mTextView.setText(String.format("Failure: %s", exception.getMessage()));
+                Log.d(exception.getMessage(), "onFailure: ");
+            }
+        });
+    }
 
     public class FeedTask extends AsyncTask<String, Void ,JSONArray> {
         // Asycdialog = new ProgressDialog(LocationCard.this);
